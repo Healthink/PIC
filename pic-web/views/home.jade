@@ -1,0 +1,95 @@
+extends layout
+
+block content
+    div(id="top",class="header")
+        div(class="vert-text")
+            a(href="#intro")
+                img(src="/images/logo.png",class="logo",alt="pMIMIC")
+            h1(style="padding-bottom:.5em;color:white") Pediatric Intensive Care Database
+            div(class="buttonbox")
+                a(href="http://pic-doc.nbscn.org/#/about/pmimic",class="btn btn-primary btn-lg",target='_blank') Documents #{' '}
+                    i(class="icon-idea")
+                a(href="/applyhome",class="btn btn-success btn-lg") Access #{' '}
+                    i(class="icon-arrow-down")
+                a(href="/chartsview",class="btn btn-info btn-lg") Explore #{' '}
+                    i(class="icon-talking")
+                a(href="https://github.com/Healthink/PIC" class="btn btn-dark btn-lg") Code (GitHub) #{' '}
+                    i(class="icon-circlestar")
+    div(class="container")
+        div(class="row")
+            div(class="col-md-6 col-md-offset-3 text-center")
+                br
+                h1 A pediatric intensive care database will coming soon!
+                br
+                p(class="lead") PIC(Pediatric Intensive Care) database is a large, single-center database comprising information relating to patients admitted to critical care units at the Children's Hospital of Zhejiang University School of Medicine. It is a supplement to the well-known <a href='https://mimic.physionet.org/'>MIMIC database</a> which provided a real clinical database for many data science researchers and supported many research projects. We hope this open pediatric intensive care database will also help improve the quality of intensive care for children.
+                hr
+    div(id="main")
+        div(id="intro", class="counterpoint")
+            div(class="container")
+                div(class="row")
+                    div(class="col-md-6 col-md-offset-3 text-center")
+                        i(class="lead-icon icon-talking")
+                        h2 Clinical resources for PIC
+                        p(class="lead") The Children's Hospital Zhejiang University School of Medicine (ZUCH), with 60 years of history, is the largest comprehensive center for pediatric medical care in Zhejiang Province, the Chinese National Clinical Research Center for Children's Health and Diseases. It have two campuses and 5 ICU wards with more than 100 ICU beds. It's hospital level information system have been established for more than a decade and is planing for more clinical information systems dedicated for ICU. It will provide a continuous data source for PIC database in the future.
+                        p
+    div(id="action", class="call-to-action")
+        div(class="container")
+            div(class="row")
+                div(class="col-md-10 col-md-offset-1 text-center")
+                    h1(style="padding-bottom:.5em;") PIC online time
+                    div(id="clockdiv")
+                        div
+                            span(class="days")
+                            div(class="smalltext") Days
+                        div
+                            span(class="hours")
+                            div(class="smalltext") Hours
+                        div
+                            span(class="minutes")
+                            div(class="smalltext") Minutes
+                        div
+                            span(class="seconds")
+                            div(class="smalltext") Seconds
+
+    script(type='text/javascript').
+        function getTimeRemaining(endtime) {
+            var t = Date.parse(new Date()) - Date.parse(endtime)  ;
+            var seconds = Math.floor((t / 1000) % 60);
+            var minutes = Math.floor((t / 1000 / 60) % 60);
+            var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            var days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                'total': t,
+                'days': days,
+                'hours': hours,
+                'minutes': minutes,
+                'seconds': seconds
+            };
+        }
+
+        function initializeClock(id, endtime) {
+            var clock = document.getElementById(id);
+            var daysSpan = clock.querySelector('.days');
+            var hoursSpan = clock.querySelector('.hours');
+            var minutesSpan = clock.querySelector('.minutes');
+            var secondsSpan = clock.querySelector('.seconds');
+
+            function updateClock() {
+                var t = getTimeRemaining(endtime);
+
+                daysSpan.innerHTML = t.days;
+                hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+                if (t.total <= 0) {
+                    clearInterval(timeinterval);
+                }
+            }
+
+            updateClock();
+            var timeinterval = setInterval(updateClock, 1000);
+        }
+
+        var deadline = new Date("2019-06-01");
+        initializeClock('clockdiv', deadline);

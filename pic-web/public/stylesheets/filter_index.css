@@ -1,0 +1,247 @@
+.row{
+    margin: 0;
+}
+
+.headerContainer{
+    margin: 50px 0;
+
+}
+.headerSearch{
+    padding-top: 25px;
+}
+.logoContainer img{
+    width: 100%;
+}
+.searchContainer .col-xs-3,.col-xs-2,.col-xs-5{
+    padding-left: 0;
+    padding-right: 0;
+}
+.searchContainer .form-control{
+    border-radius: 0;
+}
+.searchContainer .searchContent{
+    border-left: 0;
+}
+.searchContainer .advancedBtn,.searchBtn{
+    height: 34px;
+    padding: 0;
+    border-radius: 0;
+    border-left: 0;
+}
+.searchContainer .searchBtn{
+    background-color: #3399cc;
+}
+
+
+.navContainer{
+    background-color: #3399cc;
+}
+.navContainer .col-xs-4,.col-xs-8{
+    padding: 0;
+}
+.navContainer a{
+    display: inline-block;
+    padding: 6px 12px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+}
+.navContainer a:hover{
+    text-decoration:none;
+    color: #000;
+}
+.navContainer a.active{
+    color: #000;
+}
+.navContainer .col-xs-4{
+    text-align: right;
+}
+
+
+.projectDescriptionContainer{
+    padding: 15px 0;
+    /*color: #bcbbbc;*/
+}
+
+
+
+.functionContainer{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.workflowContainer,.knowledgeContainer,.newsContainer{
+    height: 370px;
+    /*padding: 5px;*/
+}
+.functionContainer .functionTitle{
+    color: #ffffff;
+    padding-left: 10px;
+}
+.workflowContainer,.knowledgeContainer{
+    background-color: #99cce5;
+}
+.workflowContainer,.newsContainer{
+    width: 42%;
+}
+.newsContainer .functionTitle{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #99cce5;
+}
+.newsContainer .functionTitle>h4{
+    margin: 0;
+}
+.knowledgeContainer{
+    width: 55%;
+}
+.functionBody{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.workflowContainer .functionBody a{
+    display: block;
+    background-color: #add6ea;
+    color: #4f5659;
+    font-weight: bold;
+    padding: 10px 10px;
+    margin:5px 5px 5px 0;
+}
+.knowledgeLayer{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.knowledgeLayer>div{
+    background-color: #add6ea;
+    height: 100px;
+    text-align: center;
+    cursor: pointer;
+    /*display: flex;*/
+}
+/*.knowledgeLayer>div>img,h5{
+    width: 50%;
+}*/
+.knowledgeLayer>div:hover{
+    box-shadow: 3px 3px 2px gray;
+}
+.knowledgeLayer img{
+    height: 57px;
+}
+.geneCard,.variationsCard,.drugsCard,.diseaseCard,.profileCard,.ontologyCard{
+    width: 30%;
+}
+
+.pathwaysCard,.interactionsCard{
+    width: 49%;
+
+}
+.newsContainer .functionBody{
+    padding: 0;
+}
+.newsContainer .functionBody li{
+    margin: 15px 0;
+    color: #3399cc;
+    cursor: pointer;
+}
+
+.divider-15{
+    height: 3px;
+    margin: 15px 0;
+    background-color: #add6ea;
+}
+
+.analysisContainer{
+
+}
+.analysisContainer .col-xs-8,.col-xs-4{
+    padding-left: 0;
+}
+.analysisContainer .panelTitle{
+    color: #ffffff;
+    background-color: #99cce5;
+    padding: 10px 5px;
+    margin: 0 0 15px 0;
+}
+.analysisContainer .form{
+    padding: 0 10px;
+}
+.analysisContainer textarea{
+    border-radius: 0;
+}
+.analysisContainer .btn-primary{
+    background-color: #3399cc;
+    border-radius: 0;
+}
+
+.footerContainer{
+    text-align: center;
+    background-color: #ebebeb;
+    padding: 10px 0 5px 0;
+    color: black;
+}
+
+#recommendList {
+    z-index: 1000;
+    position:absolute;
+    width:100%;
+}
+#recommendList a {
+    padding: 5px 15px;
+}
+#recommendList a:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.deleteSearch {
+    display: block;
+    width: 28px;
+    height: 28px;
+    padding: 0px 0px;
+    color: #fff;
+    background-color: #3399cc;
+    background-image: none;
+    border-radius:50%;
+    cursor: pointer;
+}
+.addSearch {
+    display: block;
+    width: 28px;
+    height: 28px;
+    padding: 0px 0px;
+    color: #fff;
+    background-color: #3399cc;
+    background-image: none;
+    border-radius:50%;
+    cursor: pointer;
+}
+
+.delete-icon{
+    padding-left: 6px;
+    padding-top: 6px;
+}
+.add-icon {
+    padding-left: 8px;
+    padding-top: 6px;
+}
+
+.addition {
+    padding: 3px 5px 0 5px;
+}
+.deletion {
+    padding: 3px 5px 0 5px;
+}
+
+.databaseSelect option {
+    font-size:9px;
+}
+.databaseSelect .main-option {
+    font-size:14px;
+}
+.disabledLink{
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: .65;
+}

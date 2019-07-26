@@ -1,0 +1,337 @@
+extends simplelayout
+doctype html
+block content
+
+    html(lang='zh-CN')
+        head
+            meta(charset='utf-8')
+            meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
+    script(src='/javascripts/jquery-1.11.0.min.js')
+
+
+    script(src='/javascripts/highcharts.js')
+    script(src='/javascripts/highcharts-more.js')
+    //script(src='https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js')
+    script(src='/javascripts/xrange.js')
+    script(src='/javascripts/exporting.js')
+    script(src='/javascripts/series-label.js')
+
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
+
+    div(style="width: 1000px; margin: 50px 200px;")
+
+        ul(id="position")
+
+    body
+        div(style='height:800px;min-width: 300px;max-width: 1500px;margin: 1em auto;', id="labchart")
+
+    script(type='text/javascript').
+        function search_graph_surgeryvital(Term3) {
+            //var Term =
+            !{JSON.stringify(term)};
+            $.ajax({
+                url: "/search/graph_surgeryvital/list",
+                type: "POST",
+                data: {term: Term3},
+
+                success: function (data) {
+
+
+                    var obj = {};
+                    var obj1 = {};
+                    var obj2 = {};
+                    var obj3 = {};
+                    var obj4 = {};
+                    var obj5 = {};
+                    var obj6 = {};
+                    // var obj1 = {};
+                    var arrData = [];
+
+
+                    // var b = 0;
+
+
+                    var tl = 0;//tl=sign_time.length
+
+                    var sign_time = [];//体征记录时间，横轴
+                    var sign_arr = [];
+                    var sign_arr1 = [];
+                    var sign_arr2 = [];
+                    var sign_arr3 = [];
+                    var sign_arr4 = [];
+                    var sign_arr5 = [];
+                    var sign_arr6 = [];
+                    var sign_arr7 = [];
+
+                    var k10 = 0;
+                    var k20 = 0;
+                    var k30 = 0;
+                    var k40 = 0;
+                    var k50 = 0;
+                    var k60 = 0;
+                    var k70 = 0;
+
+
+                    if (data == '') {
+                        alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+                        // window.close();
+
+                    } else {
+                        //alert("Success!");
+
+
+                        //////////// SURGERY VITAL SIGN DATA ////////////
+
+
+                        sign_arr[0] = data[0];//把重复的数据去掉,sign_arr包含全部charttime的所有数据
+                        sign_time[0] = sign_arr[0].MONITOR_TIME;
+                        var s = 1;//注意s是从1开始的，p也是从1开始的
+                        for (var p = 1; p < data.length; p++) {//循环将所有记录的时间加入数组，确定横轴
+                            if (data[p].MONITOR_TIME != data[p - 1].MONITOR_TIME) {
+                                sign_arr[s] = data[p];
+                                sign_time[s] = sign_arr[s].MONITOR_TIME;
+                                s++;
+                            }
+                        }
+
+
+                        for (var ks = 0; ks < s; ks++) {//signarr1-signarr6代表六种体征检测值
+                            if (sign_arr[ks].HeartRate != null) {
+                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].HeartRate)
+                                }
+                                k10++;
+                            }
+                            if (sign_arr[ks].Pulse != null) {
+                                sign_arr2[k20] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Pulse)
+                                }
+                                k20++;
+                            }
+                            if (sign_arr[ks].SystolicPressure != null) {
+                                sign_arr3[k30] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].SystolicPressure)
+                                }
+                                k30++;
+                            }
+                            if (sign_arr[ks].DiastolicPressure != null) {
+                                sign_arr4[k40] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].DiastolicPressure)
+                                }
+                                k40++;
+                            }
+                            if (sign_arr[ks].CentralVenousPressure != null) {
+                                sign_arr5[k50] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].CentralVenousPressure)
+                                }
+                                k50++;
+                            }
+                            if (sign_arr[ks].RespiratoryRate != null) {
+                                sign_arr6[k60] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].RespiratoryRate)
+                                }
+                                k60++;
+                            }
+                            if (sign_arr[ks].O2Saturation != null) {
+                                sign_arr7[k70] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].O2Saturation)
+                                }
+                                k70++;
+                            }
+
+
+                        }
+
+
+                        $(function () {
+                            //同步缩放效果
+                            function syncExtremes(e) {
+                                var thisChart = this.chart;
+                                if (e.trigger !== 'syncExtremes') {
+                                    Highcharts.each(Highcharts.charts, function (chart) {
+                                        if (chart !== thisChart) {
+                                            if (chart.xAxis[0].setExtremes) {
+                                                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {trigger: 'syncExtremes'});
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+                            //体征变化
+                            Highcharts.chart('timechart3', {
+                                chart: {
+                                    type: 'spline',
+                                    marginLeft: 150,
+                                    zoomType: 'xy',
+                                    panning: true,
+                                    panKey: 'ctrl'
+
+                                },
+                                title: {
+                                    text: 'SURGERY VITAL SIGNS-HADMID: ' + Term3
+                                },
+                                subtitle: {
+                                    text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
+                                },
+                                xAxis: {
+                                    type: 'datetime',
+                                    events: {
+                                        setExtremes: syncExtremes //属性：该图zoom时其他图zoom (该chart不设，其他chart设置时，其他图zoom时改图也会zoom)
+                                    },
+                                    title: {
+                                        text: 'Time In Hospital'
+                                    }
+
+                                },
+                                yAxis: [{
+                                    title: {
+                                        text: 'Measurement, Absolute Value'
+                                    },
+                                    //reversed: true,//y轴值上下顺序反向
+                                    tickInterval: 1,
+                                    min: 0
+                                }],
+
+                                tooltip: {//label样式
+                                    headerFormat: '<b>{series.name}:{point.y}</b><br>',
+                                    pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
+                                    positioner: function () {//固定标签显示位置
+                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                    },
+                                    // shadow: false,
+                                    // shape: 'round',
+                                    // borderWidth: 0,
+                                    // backgroundColor: 'rgba(0,0,0,0.2)',
+                                    crosshairs: [{            // 设置准星线样式
+                                        width: 1,
+                                        color: "#006cee",
+                                        dashStyle: 'longdashdot'
+
+                                    }, {
+                                        width: 1,
+                                        color: "#006cee",
+                                        dashStyle: 'longdashdot'
+                                    }]
+                                },
+                                //     % a:星期的缩写, 比如'Mon'.
+                                //     % A:星期的全写, 比如'Monday'.
+                                //     % d:日期的写法, 比如：01到31.
+                                //     % e:日期的写法, 1到31.
+                                //     % b:月的缩写, 比如'Jan'.
+                                //     % B:月的全写, 比如'January'.
+                                //     % m:阿拉伯月的写法, 0112.
+                                //     % y:年的缩写, 比如09代表2009.
+                                //     % Y:年的全写, 比如2009.
+                                //     % H:两位数的24小时写法, 比如00到23.
+                                //     % I:两位数的12小时写法, 00到11.
+                                //     % l(L字母的小写):12小时的写法, 1到11.
+                                //     % M:分钟写法, 00到59.
+                                //     % p:Upper case AM or PM.
+                                //     % P:Lower case AM or PM.
+                                //     % S:分钟写法, 00到59
+
+                                legend: {//图例右侧显示
+                                    layout: 'vertical',
+                                    align: 'right',
+                                    verticalAlign: 'middle'
+                                },
+
+                                plotOptions: {//line的图例标线
+                                    series: {
+                                        label: {
+                                            connectorAllowed: false
+                                        }
+                                    },
+                                    spline: {//标志点
+                                        marker: {
+                                            enabled: true
+                                        }
+                                    }
+                                },
+
+                                colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969'],
+                                series: [{
+                                    name: 'Heart Rate',
+                                    data: sign_arr1
+                                },
+                                    {
+                                        name: 'Pulse',
+                                        data: sign_arr2
+                                    },
+                                    {
+                                        name: 'Systolic Pressure',
+                                        data: sign_arr3
+                                    },
+                                    {
+                                        name: 'Diastolic Pressure',
+                                        data: sign_arr4
+                                    },
+                                    {
+                                        name: 'Central Venous Pressure',
+                                        data: sign_arr5
+                                    },
+                                    {
+                                        name: 'Respiratory Rate',
+                                        data: sign_arr6
+                                    },
+                                    {
+                                        name: 'O2 Saturation',
+                                        data: sign_arr7
+                                    }
+                                ]
+                            });
+
+                        });
+                    }
+                }
+            })
+        }
+
+        Date.prototype.format = function (format) {
+            var o = {
+                "M+": this.getMonth() + 1, //month
+                "d+": this.getDate(), //day
+                "h+": this.getHours(), //hour
+                "m+": this.getMinutes(), //minute
+                "s+": this.getSeconds(), //second
+                "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+                "S": this.getMilliseconds() //millisecond
+            }
+            if (/(y+)/.test(format))
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(format))
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            return format;
+        }
+
+        function chGMT(gmtDate) {
+            var mydate = new Date(gmtDate);
+            mydate.setHours(mydate.getHours());
+            return mydate.format("yyyy-MM-dd hh:mm:ss");
+        }
+        function in_array(searchString, array) {
+            for (var i = 0; i < array.length; i++) {
+                if (searchString == array[i][0]) return i;
+            }
+            //return false;
+        }
+
+
+        window.onload = function () {
+            search_graph_lab();
+        }

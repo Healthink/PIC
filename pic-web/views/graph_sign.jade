@@ -1,0 +1,660 @@
+
+extends simplelayout
+doctype html
+block content
+
+    html(lang='en-US')
+        head
+            //meta(charset='utf-8')
+            meta(charset='utf-8')
+            meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    //script(src='/javascripts/jquery-1.8.3.min.js')
+    script(src='/javascripts/jquery-1.11.0.min.js')
+    script(src='/javascripts/highcharts.js')
+    script(src='/javascripts/highcharts-more.js')
+    //script(src='https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js')
+    script(src='/javascripts/xrange.js')
+    script(src='/javascripts/exporting.js')
+    script(src='/javascripts/series-label.js')
+
+
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
+    //script(type='text/javascript', src='/javascripts/jquery-1.11.0.min.js')
+
+    div(style="width: 1000px; margin: 50px 200px;")
+
+        ul(id="position")
+
+
+
+
+    body
+
+
+
+        //规定height可能导致div图表重叠
+        div(id="timechart1" style='min-width: 300px;max-width: 1500px;margin: 1em auto;')
+        div(id="timechart2" style='min-width: 300px;max-width: 1500px;margin: 1em auto;')
+
+
+
+
+
+
+
+
+
+
+
+    script(type='text/javascript').
+        function search_graph_sign(){
+               var Term = !{JSON.stringify(term)};
+            $.ajax({
+                url: "/search/graph_sign/list",
+                type: "POST",
+                data: {term: Term},
+
+                success: function (data) {
+
+
+                    // var flag = 0;
+                    var drugcategory = [];
+                    var drugresult = [];
+                    // var viewresultdate = [];
+                    // var viewdate = [];
+                    //
+                    var obj = {};
+                    var obj1 = {};
+                    var obj2 = {};
+                    var obj3 = {};
+                    var obj4 = {};
+                    var obj5 = {};
+                    var obj6 = {};
+                    // var obj1 = {};
+                    var arrData = [];
+
+
+                    // var b = 0;
+
+
+                    var tl = 0;//tl=sign_time.length
+
+                    var sign_time = [];//体征记录时间，横轴
+                    var sign_arr = [];
+                    var sign_arr1 = [];
+                    var sign_arr2 = [];
+                    var sign_arr3 = [];
+                    var sign_arr4 = [];
+                    var sign_arr5 = [];
+                    var sign_arr6 = [];
+                    var k10 = 0;
+                    var k20 = 0;
+                    var k30 = 0;
+                    var k40 = 0;
+                    var k50 = 0;
+                    var k60 = 0;
+                    var starttime = [];
+                    var endtime = [];
+                    var strength = [];
+                    var dosevalue = [];
+                    var doseunit = [];
+                    var dosechange = [];
+
+
+
+
+
+                    if (data == '') {
+                        //$("#div").hide()//隐藏
+                        alert("No or lack of relevant data!"+"\n" + "Click to close the message box.");
+                        window.close();
+
+                    }
+
+                    else {
+                        //alert("Success!");
+                        //$("#div").show()//显示
+
+                        //////////////////plus loading///////////////
+
+                        var html = "<li><div>";
+                        html += "<p><span style='color:#14334b;font-size:20px'><strong>Subject ID: </strong>" + data[0].subject_id + "<strong>&emsp; Hospital Admission ID: </strong>" + data[0].hadm_id + "<strong>&emsp; ICU Stay ID: </strong>" + data[0].icustay_id + "</span></p>";
+                        html += "<p><span style='color:#14334b;font-size:15px'><strong>Gender: </strong>" + data[0].gender + "<strong>&emsp; Age: </strong>" + data[0].age + "<strong>&emsp; Enter the ICU: </strong>" + data[0].intime + "</span></p>";
+                        if (data[0].dod_hosp == "1")
+                            html += "<p><span style='color:#14334b;font-size:15px'><strong>Confirmed Dead In Hospital </strong></span></p>";
+                        html += "</div></li>";
+                        $("#position").append($(html));
+
+
+                        //////////// VITAL SIGN DATA ////////////
+
+
+                        sign_arr[0] = data[0];//把重复的数据去掉,sign_arr包含全部charttime的所有数据
+                        sign_time[0] = sign_arr[0].charttime;
+                        var s = 1;//注意s是从1开始的，p也是从1开始的
+                        for (var p = 1; p < data.length; p++) {//循环将所有记录的时间加入数组，确定横轴
+                            if (data[p].charttime != data[p - 1].charttime) {
+                                sign_arr[s] = data[p];
+                                sign_time[s] = sign_arr[s].charttime;
+                                s++;
+                            }
+                        }
+
+
+
+                        for (var ks = 0; ks < s; ks++) {//signarr1-signarr6代表六种体征检测值
+                            if (sign_arr[ks].heartrate != null) {
+                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].heartrate)
+                                }
+                                k10++;
+                            }
+                            if (sign_arr[ks].meanbp != null) {
+                                sign_arr2[k20] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].meanbp)
+                                }
+                                k20++;
+                            }
+                            if (sign_arr[ks].resprate != null) {
+                                sign_arr3[k30] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].resprate)
+                                }
+                                k30++;
+                            }
+                            if (sign_arr[ks].tempc != null) {
+                                sign_arr4[k40] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].tempc)
+                                }
+                                k40++;
+                            }
+                            if (sign_arr[ks].spo2 != null) {
+                                sign_arr5[k50] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].spo2)
+                                }
+                                k50++;
+                            }
+                            if (sign_arr[ks].glucose != null) {
+                                sign_arr6[k60] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].glucose)
+                                }
+                                k60++;
+                            }
+
+
+
+
+                        }
+
+
+
+
+                        ////////DRUG DATA/////////
+
+
+
+
+                       //  var drug=[data[0]];
+                       //  var drugflag=0;
+                       //
+                       //
+                       // //将不同charttime同样用药的记录删掉，得到不重复的用药记录
+                       //
+                       //          for (var w = 0; w < data.length; w++) {
+                       //              for(var o=0;o<drug.length;o++){
+                       //                  if (data[w].DRUG == drug[o].DRUG && data[w].STARTDATE == drug[o].STARTDATE && data[w].ENDDATE == drug[o].ENDDATE && data[w].PROD_STRENGTH == drug[o].PROD_STRENGTH && data[w].DOSE_VAL_RX == drug[o].DOSE_VAL_RX && data[w].DOSE_UNIT_RX == drug[o].DOSE_UNIT_RX) drugflag=1;
+                       //              }
+                       //              if(drugflag==0)  drug.push(data[w]);
+                       //              drugflag=0;
+                       //      }
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //  var c=0;
+                       //
+                       //  for (var q = 0; q < drug.length; q++) {
+                       //      drugcategory[c] = [drug[q].DRUG];
+                       //      starttime[c] = [drug[q].STARTDATE];
+                       //      endtime[c] = [drug[q].ENDDATE];
+                       //      strength[c] = [drug[q].PROD_STRENGTH];
+                       //      dosevalue[c] = [drug[q].DOSE_VAL_RX];
+                       //      doseunit[c] = [drug[q].DOSE_UNIT_RX];
+                       //      c++;
+                       //  }
+                       //
+                       //  //删除重复元素
+                       //  for (var i = 0; i < drug.length; i++) {
+                       //
+                       //      if (!obj[drugcategory[i]]) {
+                       //          drugresult.push(drugcategory[i]);//drugresult存储不重复药品名
+                       //          obj[drugcategory[i]] = true;
+                       //      }
+                       //
+                       //  }
+                       //
+                       //
+                       //  //为了比较剂量大小，需要将原数组中每一种药组合在一起再比较
+                       //
+                       //  for(var t=0; t<drugresult.length;t++ ){//遍历drugresult eg A B C D 0123
+                       //      var samedrug =[];//每一种新的药物设一个空白数组
+                       //      var j=0;
+                       //      for(var u=0;u<c;u++){//遍历drugcategory eg A B A C D B A 0123456
+                       //          if (drugcategory[u][0]==drugresult[t][0]){
+                       //              samedrug[j]=u;
+                       //              j++;//将相同药物存进来 eg A 026
+                       //          }
+                       //      }
+                       //
+                       //      var value =[];
+                       //      for (var j0=0;j0<j;j0++){
+                       //
+                       //          //单位换算:g,gm,mg,mg/ml,mg/kg,mg/hr,mg/min,mg/day,mg/24h,mg/kg/hr - mcg,mcg/ml,mcg/kg,mcg/h,mcg/kg/min
+                       //
+                       //          value[j0]=parseFloat(dosevalue[samedrug[j0]][0]);
+                       //          if(doseunit[samedrug[j0]][0]=="g" || doseunit[samedrug[j0]][0]=="gm") value[j0] = value[j0]*1000000;
+                       //          else if(doseunit[samedrug[j0]][0]=="mg" || doseunit[samedrug[j0]][0]=="mg/ml" || doseunit[samedrug[j0]][0]=="mg/kg" || doseunit[samedrug[j0]][0]=="mg/hr") value[j0] = value[j0]*1000;
+                       //          else if(doseunit[samedrug[j0]][0]=="mg/min" || doseunit[samedrug[j0]][0]=="mg/kg/hr") value[j0] = value[j0]*1000/60;
+                       //          else if (doseunit[samedrug[j0]][0] == "mg/day" || doseunit[samedrug[j0]][0] == "mg/24h") value[j0] = value[j0]*1000/24;
+                       //
+                       //          //为dosechange赋值
+                       //          if (j0 == 0) dosechange[samedrug[j0]] = "I";
+                       //          else if (value[j0] > value[j0-1]) {
+                       //              dosechange[samedrug[j0]] = "↑";
+                       //          } else if (value[j0] < value[j0-1]) {
+                       //              dosechange[samedrug[j0]] = "↓";
+                       //          } else if (value[j0] == value[j0-1]) {
+                       //              dosechange[samedrug[j0]] = "-";
+                       //          } else dosechange[samedrug[j0]] = "x";
+                       //      }
+                       //
+                       //
+                       //
+                       //  }
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //
+                       //  for (var r = 0; r < c; r++) {
+                       //
+                       //      if (starttime[r][0] == endtime[r][0]) {//时间点给药，end=start+1h
+                       //          arrData[r] = {
+                       //              x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
+                       //              x2: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13) + 1, chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
+                       //              y: in_array(drugcategory[r], drugresult),
+                       //              strength: strength[r][0],
+                       //              drug: drugcategory[r][0],
+                       //              dosevalue:dosevalue[r][0],
+                       //              doseunit:doseunit[r][0],
+                       //              dosechange:dosechange[r]
+                       //          }
+                       //      } else {
+                       //
+                       //          arrData[r] = {
+                       //              x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
+                       //              x2: Date.UTC(chGMT(endtime[r][0]).slice(0, 4), chGMT(endtime[r][0]).slice(5, 7) - 1, chGMT(endtime[r][0]).slice(8, 10), chGMT(endtime[r][0]).slice(11, 13), chGMT(endtime[r][0]).slice(14, 16), chGMT(endtime[r][0]).slice(17, 19)),
+                       //              y: in_array(drugcategory[r], drugresult),
+                       //              strength: strength[r][0],
+                       //              drug: drugcategory[r][0],
+                       //              dosevalue: dosevalue[r][0],
+                       //              doseunit: doseunit[r][0],
+                       //              dosechange: dosechange[r]
+                       //
+                       //          }
+                       //
+                       //      }
+                       //  }
+
+
+
+
+
+
+                        /*  本例子的目的是为了演示通过 Dom 事件、Highcharts 事件、Highcharts API 来讲一个页面中的多个图表进行联动的。
+                            本例通过循环创建类似的图表并绑定鼠标的滑动事件来对多个图表进行演示联动效果。*/
+
+                        $(function () {
+                            // /**
+                            //  * 为了让多个图表的提示框即十字准星线能够联动，这里绑定多个图表的附件 dom 的鼠标事件进行联动
+                            //  */
+                            // $('#timechart1').bind('mousemove touchmove touchstart', function (e) {
+                            //     var chart,
+                            //         point,
+                            //         i,
+                            //         event;
+                            //     for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+                            //         chart = Highcharts.charts[i];
+                            //         event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+                            //         point = chart.series[0].searchPoint(event, true); // Get the hovered point
+                            //         if (point) {
+                            //             point.highlight(e);
+                            //         }
+                            //     }
+                            // });
+
+                            // /**
+                            //  * 重写内部的方法， 这里是将提示框即十字准星的隐藏函数关闭
+                            //  */
+                            // Highcharts.Pointer.prototype.reset = function () {
+                            //     return undefined;
+                            // };
+                            // /**
+                            //  * 高亮当前的数据点，并设置鼠标滑动状态及绘制十字准星线
+                            //  */
+                            // Highcharts.Point.prototype.highlight = function (event) {
+                            //     this.onMouseOver(); // 显示鼠标激活标识
+                            //     this.series.chart.tooltip.refresh(this); // 显示提示框
+                            //     this.series.chart.xAxis[0].drawCrosshair(event, this); // 显示十字准星线
+                            // };
+
+                            /**
+                             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
+                             */
+                            function syncExtremes(e) {
+                                var thisChart = this.chart;
+                                if (e.trigger !== 'syncExtremes') {
+                                    Highcharts.each(Highcharts.charts, function (chart) {
+                                        if (chart !== thisChart) {
+                                            if (chart.xAxis[0].setExtremes) {
+                                                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {trigger: 'syncExtremes'});
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+
+                        //体征变化
+                        Highcharts.chart('timechart1', {
+                            chart: {
+                                type: 'spline',
+                                marginLeft: 150,
+                                zoomType: 'x',
+                                panning: true,
+                                panKey: 'ctrl'
+
+                            },
+                            title: {
+                                text: 'VITAL SIGNS'
+                            },
+                            subtitle: {
+                                text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
+                            },
+                            xAxis: {
+                                type: 'datetime',
+
+                                events: {
+                                    setExtremes: syncExtremes
+                                },
+
+
+                                title: {
+                                    text: 'Time In ICU'
+                                }
+
+                            },
+                            yAxis: [{
+                                title: {
+                                    text: 'Measurement, Absolute Value'
+                                },
+                                //reversed: true,//y轴值上下顺序反向
+                                tickInterval: 1,
+                                min: 0
+                            }],
+
+                            tooltip: {//label样式
+                                headerFormat: '<b>{series.name}:{point.y}</b><br>',
+                                pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
+                                positioner: function () {//固定标签显示位置
+                                    return {x: this.chart.chartWidth - this.label.width-1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                },
+                                // shadow: false,
+                                // shape: 'round',
+                                // borderWidth: 0,
+                                // backgroundColor: 'rgba(0,0,0,0.2)',
+                                crosshairs: [{            // 设置准星线样式
+                                    width: 1,
+                                    color: "#006cee",
+                                    dashStyle: 'longdashdot'
+
+                                }, {
+                                    width: 1,
+                                    color: "#006cee",
+                                    dashStyle: 'longdashdot'
+                                }]
+                            },
+                            //     % a:星期的缩写, 比如'Mon'.
+                            //     % A:星期的全写, 比如'Monday'.
+                            //     % d:日期的写法, 比如：01到31.
+                            //     % e:日期的写法, 1到31.
+                            //     % b:月的缩写, 比如'Jan'.
+                            //     % B:月的全写, 比如'January'.
+                            //     % m:阿拉伯月的写法, 0112.
+                            //     % y:年的缩写, 比如09代表2009.
+                            //     % Y:年的全写, 比如2009.
+                            //     % H:两位数的24小时写法, 比如00到23.
+                            //     % I:两位数的12小时写法, 00到11.
+                            //     % l(L字母的小写):12小时的写法, 1到11.
+                            //     % M:分钟写法, 00到59.
+                            //     % p:Upper case AM or PM.
+                            //     % P:Lower case AM or PM.
+                            //     % S:分钟写法, 00到59
+
+                            legend: {//图例右侧显示
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+
+                            plotOptions: {//line的图例标线
+                                series: {
+                                    label: {
+                                        connectorAllowed: false
+                                    }
+                                },
+                                spline: {//标志点
+                                    marker: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+
+                            colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF'],
+                            series: [{
+                                name: 'Heart Rate',
+                                data: sign_arr1
+                            },
+                                {
+                                    name: 'Blood Pressure, mean',
+                                    data: sign_arr2
+                                },
+                                {
+                                    name: 'Respiratory Rate',
+                                    data: sign_arr3
+                                },
+                                {
+                                    name: 'Body Temperature',
+                                    data: sign_arr4
+                                },
+                                {
+                                    name: 'Blood Oxygen Saturation',
+                                    data: sign_arr5
+                                },
+                                {
+                                    name: 'Blood Glucose Concentration',
+                                    data: sign_arr6
+                                }
+                            ]
+                        });
+
+
+                        //用药情况
+                        // Highcharts.chart('timechart2', {
+                        //     chart: {
+                        //         type: 'xrange',
+                        //         marginLeft: 150,
+                        //         zoomType: 'xy',
+                        //         panning: true,
+                        //         panKey: 'ctrl'
+                        //
+                        //
+                        //     },
+                        //     title: {
+                        //         text: 'MEDICATION'
+                        //     },
+                        //     subtitle: {
+                        //         text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
+                        //     },
+                        //
+                        //
+                        //
+                        //     xAxis: {
+                        //         type: 'datetime',
+                        //         events: {
+                        //             setExtremes: syncExtremes
+                        //         },
+                        //         title: {
+                        //             text: 'Medication Time'
+                        //         }
+                        //
+                        //
+                        //
+                        //     },
+                        //
+                        //     yAxis: [{
+                        //         title: {
+                        //             text: ''
+                        //         },
+                        //         categories: drugresult,//y轴的值(药品名称需要查询)
+                        //         reversed: true,//y轴值上下顺序反向
+                        //         tickInterval: 1
+                        //     }],
+                        //
+                        //
+                        //
+                        //     tooltip: {//label样式
+                        //
+                        //         headerFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S}-{point.x2:%A,%b.%e,%Y,%H:%M:%S}<br>',
+                        //         pointFormat: '<b>Drug:</b>{point.drug}<br><b>Strength:</b>{point.strength}<br><b>Dosage:</b>{point.dosevalue}{point.doseunit} ',
+                        //         positioner: function () {//固定标签显示位置
+                        //             return {x: this.chart.chartWidth - this.label.width-1, y: 0};
+                        //         },
+                        //         // shadow: false,
+                        //         // shape: 'round',
+                        //         // borderWidth: 0,
+                        //         // backgroundColor: 'rgba(0,0,0,0.2)',
+                        //
+                        //         crosshairs: [{            // 设置准星线样式
+                        //             width: 1,
+                        //             color: "#006cee",
+                        //             dashStyle: 'longdashdot'
+                        //
+                        //         }, {
+                        //             width: 1,
+                        //             color: "#006cee",
+                        //             dashStyle: 'longdashdot'
+                        //         }]
+                        //
+                        //     },
+                        //
+                        //
+                        //     legend: {//图例右侧显示
+                        //         layout: 'vertical',
+                        //         align: 'right',
+                        //         verticalAlign: 'middle'
+                        //
+                        //     },
+                        //
+                        //
+                        //
+                        //     series: [{
+                        //         name: 'Drugs',
+                        //         dashStyle: 'solid',
+                        //         //borderColor: 'gray',
+                        //         pointWidth: 5,
+                        //         data: arrData,
+                        //         dataLabels: {
+                        //             enabled: true,
+                        //             defer: false,
+                        //             inside: true,
+                        //             align:'center',
+                        //             format:'{point.dosechange}'
+                        //             }
+                        //
+                        //     }]
+                        // });
+                        });
+                    }
+                }
+                })
+                }
+
+
+
+
+
+           Date.prototype.format = function (format) {
+               var o = {
+                   "M+": this.getMonth() +1, //month
+                   "d+": this.getDate(), //day
+                   "h+": this.getHours(), //hour
+                   "m+": this.getMinutes(), //minute
+                   "s+": this.getSeconds(), //second
+                   "q+": Math.floor((this.getMonth() + 3) / 3), //
+                   "S": this.getMilliseconds() //millisecond
+               }
+
+           }
+
+           function chGMT(gmtDate) {
+               var mydate = new Date(gmtDate);
+               mydate.setHours(mydate.getHours());
+               return mydate.format("yyyy-MM-dd hh:mm:ss");
+           }
+
+           function in_array(searchString, array) {
+               for (var i = 0; i < array.length; i++) {
+                   if (searchString == array[i][0]) return i;
+               }
+               //return false;
+           }
+
+
+
+
+
+
+
+
+
+
+
+        window.onload = function () {
+
+
+            search_graph_sign();
+
+
+        }
+
+
+

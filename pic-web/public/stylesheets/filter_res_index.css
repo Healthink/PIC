@@ -1,0 +1,89 @@
+.container h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #b9772e;
+}
+
+.mainContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.databaseContent {
+    background-color: #99cce5;
+    width: 20%;
+}
+
+.statisticsContent{
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
+
+.recommendContent {
+    width: 20%;
+}
+
+.contentTitle {
+    color: #ffffff;
+    padding-left: 10px;
+}
+
+.contentBody {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.databaseContent .contentBody .list-group {
+    margin-top: 30px;
+}
+
+.databaseContent .contentBody a {
+    display: block;
+    /*background-color: #add6ea;*/
+    color: #4f5659;
+    font-weight: bold;
+    padding: 10px 10px;
+    margin:5px 5px 5px 0;
+}
+
+.statisticsContent .contentTitle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #99cce5;
+}
+
+.recommendContent .contentTitle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #99cce5;
+}
+
+.recommendContent .contentBody {
+    padding: 0px 0px;
+    overflow-y: auto;
+    height: 450px;
+    width: 230px;
+}
+
+.recommendContent .contentBody ul{
+    padding-left: 10px;
+}
+
+.recommendContent .contentBody ul li {
+    border-bottom: 1px dotted #333;
+    padding: 10px 5px 0 5px;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.searchResults {
+    width: 700px;
+    height: 600px;
+}
+
+.list-group a{
+    cursor: pointer;
+}
+

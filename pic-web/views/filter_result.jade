@@ -1,0 +1,139 @@
+
+extends simplelayout1
+extends filter
+block content
+
+    head
+
+        link(rel="stylesheet", href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css")
+        link(href='../public/stylesheets/bootstrap.min.css', rel='stylesheet')
+        script(src='../public/javascripts/jquery-3.3.1.js')
+        script(src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js")
+        script(src='../public/javascripts/bootstrap.min.js')
+
+
+
+    body
+
+        div(id="filterresult" style="width:80%;margin-left:10%;margin-right:10%")
+            table(class="display", id="Filter_Result" )
+                thead
+                    tr
+                        th(class="featkey_h") subject id
+                        th(class="featkey_h") gender
+                        th(class="featkey_h") DOB
+                        th(class="featkey_h") death
+                        th(class="featkey_h") DOD
+                        //th(class="featkey_h") hospital admission id
+                        th(class="featkey_h") admit time
+                        th(class="featkey_h") admit location
+                        th(class="featkey_h") discharge time
+                        th(class="featkey_h") discharge location
+                        th(class="featkey_h") diagnosis
+                        //th(class="featkey_h") icustay id
+                        th(class="featkey_h") first care unit
+                        th(class="featkey_h") last care unit
+                        th(class="featkey_h") icu in
+                        th(class="featkey_h") icu out
+                        th(class="featkey_h") LOS icu
+
+                tbody
+
+
+    script( type="text/javascript").
+        var data = !{JSON.stringify(FilterResults)};
+
+
+
+        $('#Filter_Result').DataTable({
+            data: data,
+            autoWidth: false,
+            columns: [
+                {data: 'SUBJECT_ID'},
+                {data: 'GENDER'},
+                {
+                    data: 'DOB',
+                    render:function (d) {
+                        if (d != null)
+                            return d.substr(0, 10);
+                        return d;
+                    }
+                },
+                {data: 'EXPIRE_FLAG'},
+                {
+                    data: 'DOD',
+                    render:function (d) {
+                        if (d!=null)
+                            return d.substr(0,10);
+                        return d;
+                    }
+                },
+               // {data: 'HADM_ID'},
+                {
+                    data: 'ADMITTIME',
+                    render: function (d) {
+                        if (d != null)
+                            return d.substr(0, 10);
+                        return d;
+                    }
+                },
+                {data: 'ADMISSION_LOCATION'},
+                {
+                    data: 'DISCHTIME',
+                    render: function (d) {
+                        if (d != null)
+                            return d.substr(0, 10);
+                        return d;
+                    }
+                },
+                {data: 'DISCHARGE_LOCATION'},
+                {data: 'DIAGNOSIS'},
+                //{data: 'ICUSTAY_ID'},
+                {data: 'FIRST_CAREUNIT'},
+                {data: 'LAST_CAREUNIT'},
+                {
+                    data: 'INTIME',
+                    render: function (d) {
+                        if (d != null)
+                            return d.substr(0, 10);
+                        return d;
+                    }
+                },
+                {
+                    data: 'OUTTIME',
+                    render: function (d) {
+                        if (d != null)
+                            return d.substr(0, 10);
+                        return d;
+                    }
+                },
+                {data: 'LOS'}
+            ],
+            columnDefs: [
+                {width: '9%', targets: 2},
+                {width: '9%', targets: 4},
+                {width: '9%', targets: 5},
+                {width: '9%', targets: 7},
+                {width: '9%', targets: 12},
+                {width: '9%', targets: 13},
+                //{width: '9%', targets: 15},
+            ],
+        });
+        $("#cosmic_spinner").css("display", "none");
+        //Cosmic_spinner.stop();
+
+        $(document).ready(function () {
+            var table = $('#Filter_Result').DataTable();
+
+            $('#Filter_Result tbody').on('click', 'tr', function () {
+                var rowdata = table.row(this).data();
+                var index = rowdata.SUBJECT_ID;
+                redirect_filterresult(index);
+            });
+        });
+
+
+
+        function redirect_filterresult(a) {
+            window.open("/search/id?q=" + a);
+        }

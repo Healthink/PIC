@@ -1,0 +1,24 @@
+extends layout
+
+block content
+    div(id="top",class="header")
+        div(class="vert-text")
+            a(href="#intro")
+                img(src="/images/logo.png",class="logo",alt="PIC")
+            h1(style="padding-bottom:.5em;color:white") Pediatric Intensive Care Database
+            div(class="buttonbox")
+                a(href="http://pic-doc.nbscn.org/#/about/pmimic",class="btn btn-primary btn-lg",target='_blank') Documents #{' '}
+                    i(class="icon-idea")
+                a(href="/applyhome",class="btn btn-success btn-lg") Access #{' '}
+                    i(class="icon-arrow-down")
+                a(href="/chartsview",class="btn btn-info btn-lg") Explore #{' '}
+                    i(class="icon-talking")
+                a(href="https://github.com/Healthink/PIC" class="btn btn-dark btn-lg") Code (GitHub) #{' '}
+                    i(class="icon-circlestar")
+    div(class="container")
+        div(class="row")
+            div(class="col-md-6 col-md-offset-3 text-center")
+                h2 Your application have been submitted successfully.
+                h3 The administrator will review your application information to confirm your identity, ensure that you have received clinical research training from the relevant person's research, and have the basis and background for conducting the relevant research, and the purpose of the research is in line with PIC related regulations.
+                h3 It will take about 3 working days for applications that do not need reference. Review time of applications with reference will depend on the feedback time of referal.
+                h3 If the application was approved, the applicant will recieve a Email with a download link that is valid for 24 hours.

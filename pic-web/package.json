@@ -1,0 +1,28 @@
+{
+  "name": "PIC",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "ajax": "0.0.4",
+    "async": "2.6.1",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "formidable": "^1.2.1",
+    "http-errors": "~1.6.2",
+    "jade": "^1.11.0",
+    "morgan": "~1.9.0",
+    "mysql": "latest",
+    "nodemailer": "^6.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "pug": "^2.0.3",
+    "stringformat": "0.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0"
+  }
+}

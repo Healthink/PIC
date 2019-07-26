@@ -1,0 +1,334 @@
+//
+   Created by Haomin on 2017/10/31.
+
+extends filter
+doctype html
+block content
+    script(src='/javascripts/highcharts.js')
+    script(src='/javascripts/exporting.js')
+    script(src='https://code.highcharts.com/modules/export-data.js')
+    H2(style="text-align:center") Data summary of PIC database
+    br
+    div(id="pmimic_summary",style="max-width:1400px;margin: 0 auto;align:center")
+        div(id="patients_container", style="min-width:600px;height:400px;max-width:800px;margin:0 auto;float:left")
+        div(id="patientage_container", style="min-width:800px;height:400px;max-width:800px;margin:0 auto    ;float:right")
+
+        div(id="topdisease_container", style="min-width:600px;height:400px;max-width:800px;margin:0 auto;float:left")
+        div(id="ICUStay_container", style="min-width:800px;height:400px;max-width:800px;margin:0 auto;float:right")
+
+        div(id="admissionlocation_container", style="min-width:600px;height:400px;max-width:800px;margin:0 auto;float:left")
+        div(id="admissionmonth_container", style="min-width:800px;height:400px;max-width:800px;margin:0 auto;float:right")
+
+    script(type='text/javascript').
+        function GetICULOS(){
+            $.ajax({
+                url: "/chartsview/ICULOS",
+                type: "GET",
+                success: function (data) {
+                    for (var items in data) {
+                        ICULOSData.push(data[items].value)
+                    }
+                    ShowLOSChart()
+                }
+            })
+        }
+
+        function GetPatientAge(){
+            $.ajax({
+                url: "/chartsview/patientage",
+                type: "GET",
+                success: function (data) {
+                    for (var items in data) {
+                        oneagedata = [];
+                        oneagedata.push(data[items].age);
+                        oneagedata.push(data[items].value);
+                        patientAgeData.push(oneagedata);
+                    }
+                    ShowAgeChart();
+                }
+            })
+        }
+
+        function GetTopDisease() {
+            $.ajax({
+                url: "/chartsview/topdiseases",
+                type: "GET",
+                success: function (data) {
+                    for (var items in data) {
+                        TopDiseaseCategory.push(data[items].TITLE_EN);
+                        TopDiseaseValue.push(data[items].value);
+                    }
+                    ShowTopDiseaseChart();
+                }
+            })
+        }
+
+        // function GetAdmissionReason(){
+        //     $.ajax({
+        //         url: "/chartsview/admissionreason",
+        //         type: "GET",
+        //         success: function (data) {
+        //             for (var items in data) {
+        //                 ItemDatas = {name:data[items].reason,y:data[items].value}
+        //                 AdmissionReason.push(ItemDatas);
+        //             }
+        //             ShowReasonChart();
+        //         }
+        //     })
+        // }
+        function GetAdmissionLocation() {
+            $.ajax({
+                url: "/chartsview/admissionlocation",
+                type: "GET",
+                success: function (data) {
+                    for (var items in data) {
+                        ItemDatas = {name: data[items].location, y: data[items].value}
+                        AdmissionLocation.push(ItemDatas);
+                    }
+                    ShowLocationChart();
+                }
+            })
+        }
+
+        function GetAdmissionmonth(){
+            $.ajax({
+                url: "/chartsview/admissionmonth",
+                type: "GET",
+                success: function (data) {
+                    for (var items in data) {
+                        Admissionmonth.push(data[items].value);
+                    }
+                    ShowMonthChart();
+                }
+            })
+        }
+        patientData = [];
+        ICULOSData = [];
+        patientAgeData = [];
+        TopDiseaseCategory = [];
+        TopDiseaseValue = [];
+        // AdmissionReason = [];
+        AdmissionLocation = [];
+        Admissionmonth = [];
+        $.ajax({
+            url: "/chartsview/patients",
+            type: "GET",
+            success: function (data) {
+                for (var items in data){
+                    ItemData = {name:data[items].GENDER,y:data[items].value}
+                    patientData.push(ItemData)
+
+                }
+                showPatientCharts();
+                GetPatientAge();
+                GetICULOS();
+                GetTopDisease();
+                // GetAdmissionReason();
+                GetAdmissionLocation();
+                GetAdmissionmonth();
+
+            }
+        })
+        function showPatientCharts(){
+            Highcharts.chart('patients_container', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Patients'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y}({point.percentage:.1f} %)',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Patients',
+                    colorByPoint: true,
+                    data: patientData
+                }]
+            })
+        }
+        function ShowLOSChart(){
+            Highcharts.chart('ICUStay_container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'ICU LOS'
+                },
+                crosshair: true,
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Cases'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}days LOS</span><table>',
+                    pointFormat: '<td>Count: {point.y}</td> ',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.1,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'LOS (days)',
+                    data: ICULOSData,
+
+                }]
+            });
+        }
+        function ShowAgeChart(){
+            Highcharts.chart('patientage_container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Patient Age'
+                },
+                crosshair: true,
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Cases'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.x}Years old</span><table>',
+                    pointFormat: '<td>Count: {point.y}</td> ',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.1,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Age (years)',
+                    data: patientAgeData,
+
+                }]
+            });
+        }
+
+        function ShowTopDiseaseChart() {
+            Highcharts.chart('topdisease_container', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'Top Diseases'
+                },
+                crosshair: true,
+                xAxis:{
+                    categories: TopDiseaseCategory
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Cases'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.1,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Cases',
+                    data: TopDiseaseValue,
+
+                }]
+            });
+        }
+        function ShowLocationChart(){
+            Highcharts.chart('admissionlocation_container', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Admission Location'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y}({point.percentage:.1f} %)',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'location',
+                    data: AdmissionLocation
+                }]
+            })
+        };
+        function ShowMonthChart(){
+            Highcharts.chart('admissionmonth_container', {
+                title: {
+                    text: 'Admission Month'
+                },
+                xAxis : {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                },
+
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'admission month'
+                    }
+                },
+                plotLines:{
+                    value:0,
+                    width:1,
+                    calor:'#808080'
+                },
+                series: [{
+                    name: 'Count',
+                    data: Admissionmonth,
+
+                }]
+            });
+        }
+
+

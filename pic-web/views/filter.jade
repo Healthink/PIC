@@ -1,0 +1,98 @@
+//筛选弹窗
+doctype html
+html(lang="zh-CN")
+    head
+        meta(charset="UTF-8")
+        link(href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet")
+        //link(href="/stylesheets/filter_index.css" rel="stylesheet")
+        script(src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js")
+        script(src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js")
+    body
+        include simplelayout1
+        div(class="container")
+            //advanced search modal
+            div(id="filter" class="modal fade")
+                div(class="modal-dialog" )
+                    div(class="modal-content" )
+                        div(class="modal-header" )
+                            button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+                                span &times;
+                            h4(class="modal-title") PIC:Patients Filter
+                        div(class="modal-body")
+                            //div(class="row")
+                            form(class="form-horizontal" action="filter_result" method='get')
+                                div(class="form-group")
+                                    div(class="col-xs-5" style="padding-left: 50px;") Gender
+                                    div(class="col-xs-7" )
+                                        select(class="form-control GenderSelect" name='gender')
+                                            option(value="0") All
+                                            option(value="1.1" class="main-option") Male
+                                            option(value="1.2" class="main-option") Female
+                                div(class="form-group")
+                                    div(class="col-xs-5" style="padding-left: 50px;") Death
+                                    div(class="col-xs-7")
+                                        select(class="form-control DeathSelect" name='death')
+                                            option(value="0") All
+                                            option(value="1.1" class="main-option") Dead
+                                            option(value="1.2" class="main-option") Not Dead
+                                div(class="form-group")
+                                    div(class="col-xs-5" style="padding-left: 50px;") Length Of ICU Stay
+                                    div(class="col-xs-7")
+                                        select(class="form-control LOSSelect" name='los')
+                                            option(value="0" ) All
+                                            option(value="1.1" class="main-option") LOS<5
+                                            option(value="1.2" class="main-option") 5<=LOS<10
+                                            option(value="1.3" class="main-option") LOS>10
+                                div(class="form-group")
+                                    div(class="col-xs-5" style="padding-left: 50px;") Admission Location
+                                    div(class="col-xs-7")
+                                        select(class="form-control DepartmentSelect" name='department')
+                                            option(value="0") All
+                                            option(value="1" class="main-option" disabled="disabled") **ICU**
+                                            option(value="1.1") Cardiac Intensive Care Unit
+                                            option(value="1.2") General ICU
+                                            option(value="1.3") Neonatal Intensive Care Unit
+                                            option(value="1.4") Pediatric Intensive Care Unit
+                                            option(value="1.5") Surgical Intensive Care Unit
+                                            option(value="2" class="main-option" disabled="disabled") **Department**
+                                            option(value="2.1") Burn/Neurosurgery Department
+                                            option(value="2.2") Cardiac Surgery Department
+                                            option(value="2.3") Cardiovascular Department
+                                            option(value="2.4") Endocrinology Department
+                                            option(value="2.5") Gastroenterology Department
+                                            option(value="2.6") General Surgery Department
+                                            option(value="2.7") General Surgery/Endoscopy Department
+                                            option(value="2.8") General Surgery/Neonatology Surgery Department
+                                            option(value="2.9") Hematology Department
+                                            option(value="2.10") Infectious Diseases Department
+                                            option(value="2.11") Neonatology Department
+                                            option(value="2.12") Nephrology Department
+                                            option(value="2.13") Neurology Department
+                                            option(value="2.14") Ophthalmology Department/ENT
+                                            option(value="2.15") Orthopedics/Neurology Department
+                                            option(value="2.16") Orthopedics/Traumatology Department
+                                            option(value="2.17") Pediatric Internal Medicine
+                                            option(value="2.18") Respiratory Medicine Department
+                                            option(value="2.19") Rheumatology Department
+                                            option(value="2.20") Thoracic Surgery/Oncology Department
+                                            option(value="2.21") Urinary Surgery Department
+                                            option(value="3" class="main-option" disabled="disabled") **Ward**
+                                            option(value="3.1") Ward 9
+                                            option(value="3.2") Ward 14
+                                            option(value="4" class="main-option") **Others**
+
+
+                        div(class="modal-footer")
+                            button(type="button" class="btn btn-default" data-dismiss="modal") Close
+                            button(type="button" class="btn btn-primary" onclick = 'submitAdvancedSearchForm()') Search
+
+        //block content
+
+
+    //script(src="/javascripts/filter_index.js")
+    script(type="text/javascript").
+        //advanced search
+        function submitAdvancedSearchForm() {
+            //var advancedSearchData = $(".modal-body form").serialize();
+            $(".modal-body form").submit();
+        }

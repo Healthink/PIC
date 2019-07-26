@@ -1,0 +1,129 @@
+article, figure{
+    /* Applying CSS3 rounded corners: */
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius:1px;
+}
+
+/* Article styles: */
+
+#page{
+    width:960px;
+    margin:0 auto;
+    position:relative;
+}
+
+article{
+    background-color:#936c6c;
+    margin:3em 0;
+    padding:20px;
+    color:#fcfcfc;
+    /*text-shadow:0 2px 0 black;*/
+}
+
+figure{
+    border:1px;
+    /*float:right;*/
+    background-color:#ffffff;
+    /*margin-left:15px;*/
+    overflow:hidden;
+    width:90%;
+}
+
+figure:hover{
+    -moz-box-shadow:0 0 2px #4D7788;
+    -webkit-box-shadow:0 0 2px #4D7788;
+    /*box-shadow:0 0 2px #4D7788;*/
+}
+
+figure img{
+    /*margin-left:-60px;*/
+}
+
+.section {
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    padding: 50px;
+}
+.select * {
+    margin: 0;
+    padding: 0;
+}
+.select {
+    border:1px solid #cccccc;
+    float: left;
+    display: inline;
+}
+.select div {
+    border:1px solid #f9f9f9;
+    float: left;
+}
+/* 子选择器，在FF等非IE浏览器中识别 */
+.select>div {
+    width:120px;
+    height: 17px;
+    overflow:hidden;
+}
+
+/* 通配选择符，只在IE浏览器中识别 */
+* html .select div select {
+    display:block;
+    float: left;
+    margin: -2px;
+}
+.select div>select {
+    display:block;
+    width:124px;
+    float:none;
+    margin: -2px;
+    padding: 0px;
+}
+.select:hover {
+    border:1px solid #666666; //鼠标移上的效果
+}
+.select select>option {
+    text-indent: 2px; //option在FF等非IE浏览器缩进2px
+}
+.select * {
+                                                        margin: 0;
+                                                        padding: 0;
+                                                    }
+.select {
+    border:1px solid #cccccc;
+    float: left;
+    display: inline;
+}
+.select div {
+    border:1px solid #f9f9f9;
+    float: left;
+}
+/* 子选择器，在FF等非IE浏览器中识别 */
+.select>div {
+    width:120px;
+    height: 17px;
+    overflow:hidden;
+}
+
+/* 通配选择符，只在IE浏览器中识别 */
+* html .select div select {
+    display:block;
+    float: left;
+    margin: -2px;
+}
+.select div>select {
+    display:block;
+    width:124px;
+    float:none;
+    margin: -2px;
+    padding: 0px;
+}
+.select:hover {
+    border:1px solid #666666; //鼠标移上的效果
+}
+.select select>option {
+    text-indent: 2px; //option在FF等非IE浏览器缩进2px  }
+
+ul {list-style:none;margin:10px;}
+li {height:20px;  font-size:14px; color:blue; position:relative;}
+li:hover {height:30px;  font-size:15px; color:red; position:relative;cursor: pointer;}

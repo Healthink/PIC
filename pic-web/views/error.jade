@@ -1,0 +1,9 @@
+
+extends simplelayout
+
+block content
+    div(id="noResultsMessage")
+        h2 Sorry,this page was not found.
+        h4=message
+        h2=error.status
+        pre #{error.stack}

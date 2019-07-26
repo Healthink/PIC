@@ -1,0 +1,183 @@
+extends simplelayout
+doctype html
+bl ock content
+
+    html(lang='zh-CN')
+        head
+            meta(charset='utf-8')
+
+            meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
+    link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
+    script(src='/javascripts/jquery-1.11.0.min.js')
+
+
+    script(src="https://www.amcharts.com/lib/3/amcharts.js")
+    script(src="https://www.amcharts.com/lib/3/serial.js")
+    script(src="https://www.amcharts.com/lib/3/themes/light.js")
+
+
+    div(style="width: 1000px; margin: 50px 200px;")
+
+        ul(id="position")
+
+    body
+        div(id="chartdiv" style="height: 80px;")
+
+
+
+    script(type='text/javascript').
+        function search_graph_event() {
+            var Term = !{JSON.stringify(term)};
+            $.ajax({
+                url: "/search/graph_event/list",
+                type: "POST",
+                data: {term: Term},
+
+                success: function (data) {
+
+                    if (data == '') {
+                        alert("No corresponding data!");
+                    } else {
+                        //alert("success");
+
+
+                        var chart = AmCharts.makeChart("chartdiv", {
+                            "type": "serial",
+                            "theme": "light",
+                            "marginTop": 50,
+                            "plotAreaBorderAlpha": 1,
+                            "plotAreaBorderColor": "#ed6c2d",
+                            "plotAreaFillrAlpha": 1,
+                            "plotAreaFillColors": "#ed6c2d",
+                            "dataProvider": [{
+                                // Need at least one empty data item
+                            }],
+                            "zoomOutText": "",
+                            "dataDateFormat": "YYYY-MM-DD",
+                            "valueAxes": [{
+                                "type": "date",
+                                "gridAlpha": 0,
+                                "axisColor": "#ed6c2d",
+                                "axisThickness": 2,
+                                "boldPeriodBeginning": false,
+                                "tickLength": 20,
+                                "minHorizontalGap": 70,
+                                "centerLabelOnFullPeriod": false,
+                                "minimumDate": "2016-01-01",
+                                "maximumDate": "2016-12-31",
+                                "dateFormats": [{
+                                    period: 'DD',
+                                    format: 'MMM DD'
+                                }, {
+                                    period: 'WW',
+                                    format: 'MMM DD'
+                                }, {
+                                    period: 'MM',
+                                    format: 'MMMM'
+                                }, {
+                                    period: 'YYYY',
+                                    format: 'YYYY'
+                                }],
+                                "guides": [{
+                                    "value": new Date(2016, 2, 5),
+                                    "label": "admit",
+                                    "position": "top",
+                                    "fontSize": 15,
+                                    "tickLength": 15
+                                }, {
+                                    "value": new Date(2016, 4, 1),
+                                    "label": "transfer",
+                                    "position": "top",
+                                    "fontSize": 15,
+                                    "tickLength": 15
+                                }, {
+                                    "value": new Date(2016, 6, 22),
+                                    "label": "service",
+                                    "position": "top",
+                                    "fontSize": 15,
+                                    "tickLength": 15
+                                }, {
+                                    "value": new Date(2016, 11, 1),
+                                    "label": "discharge",
+                                    "position": "top",
+                                    "fontSize": 15,
+                                    "tickLength": 15,
+                                    "color": "#ed6c2d"
+                                }]
+                            }],
+                            "startDuration": 1,
+                            "graphs": [{
+                                // Need to have at least one empty graph
+                            }],
+                            "rotate": true,
+                            "columnWidth": 1,
+                            "categoryField": "category",
+                            "categoryAxis": {
+                                "gridAlpha": 0,
+                                "position": "left",
+                                "labelsEnabled": false,
+                                "tickLength": 0
+                            },
+                            "creditsPosition": "bottom-left"
+                        });
+
+
+
+
+
+
+
+                    }
+                }
+
+            })
+        }
+
+        Date.prototype.format = function (format) {
+            var o = {
+                "M+": this.getMonth() + 1, //month
+                "d+": this.getDate(), //day
+                "h+": this.getHours(), //hour
+                "m+": this.getMinutes(), //minute
+                "s+": this.getSeconds(), //second
+                "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+                "S": this.getMilliseconds() //millisecond
+            }
+            if (/(y+)/.test(format))
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(format))
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            return format;
+        }
+
+        function chGMT(gmtDate) {
+            var mydate = new Date(gmtDate);
+            mydate.setHours(mydate.getHours());
+            return mydate.format("yyyy-MM-dd hh:mm:ss");
+        }
+        function in_array(searchString, array) {
+            for (var i = 0; i < array.length; i++) {
+                if (searchString == array[i][0]) return i;
+            }
+            //return false;
+        }
+
+
+
+
+
+
+
+
+        window.onload = function () {
+
+
+            search_graph_event();
+
+
+
+        }
