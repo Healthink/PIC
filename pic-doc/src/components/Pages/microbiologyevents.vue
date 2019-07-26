@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains microbiology information, including tests performed and sensitivities.</p>
 
-<p><strong>Number of rows:</strong> 197,437</p>
+<p><strong>Number of rows:</strong> 183,869</p>
 
 <p><strong>Links to:</strong></p>
 

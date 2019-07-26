@@ -51,7 +51,7 @@
 
 <ul>
 <li><strong>D_ICD_DIAGNOSES</strong>: Dictionary of International Statistical Classification of Diseases and Related Health Problems (ICD) codes relating to diagnoses</li>
-<li><strong>D_ITEMS</strong>: Dictionary of <code>ITEMID</code>s appearing in the MIMIC database, except those that relate to laboratory tests</li>
+<li><strong>D_ITEMS</strong>: Dictionary of <code>ITEMID</code>s appearing in the PIC database, except those that relate to laboratory tests</li>
 <li><strong>D_LABITEMS</strong>: Dictionary of <code>ITEMID</code>s in the laboratory database that relate to laboratory tests</li>
 </ul>
 

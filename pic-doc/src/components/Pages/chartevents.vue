@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains all charted data for all patients.</p>
 
-<p><strong>Number of rows:</strong> 1,177,050</p>
+<p><strong>Number of rows:</strong> 1,033,301</p>
 
 <p><strong>Links to:</strong></p>
 
@@ -61,7 +61,7 @@
 
 <tr>
 <td>ICUSTAY_ID</td>
-<td>DOUBLE</td>
+<td>INT</td>
 </tr>
 
 <tr>

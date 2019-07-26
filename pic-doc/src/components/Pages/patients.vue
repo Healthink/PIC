@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains all charted data for all patients.</p>
 
-<p><strong>Number of rows:</strong> 13,447</p>
+<p><strong>Number of rows:</strong> 12,881</p>
 
 <p><strong>Links to:</strong></p>
 

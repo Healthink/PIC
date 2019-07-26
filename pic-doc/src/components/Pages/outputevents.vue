@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Output data for patients.</p>
 
-<p><strong>Number of rows:</strong> 43,483</p>
+<p><strong>Number of rows:</strong> 39,891</p>
 
 <p><strong>Links to:</strong></p>
 
@@ -52,7 +52,7 @@
 
 <tr>
 <td>ICUSTAY_ID</td>
-<td>DOUBLE</td>
+<td>INT</td>
 </tr>
 
 <tr>

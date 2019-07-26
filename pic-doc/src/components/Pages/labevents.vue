@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains all laboratory measurements for a given patient.</p>
 
-<p><strong>Number of rows:</strong> 10,683,802</p>
+<p><strong>Number of rows:</strong> 10,094,117</p>
 
 <p><strong>Links to:</strong></p>
 

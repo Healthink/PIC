@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains medication related order entries, i.e. prescriptions.</p>
 
-<p><strong>Number of rows:</strong> 1,512,902</p>
+<p><strong>Number of rows:</strong> 1,256,591</p>
 
 <p><strong>Links to:</strong></p>
 
@@ -50,7 +50,7 @@
 
 <tr>
 <td>ICUSTAY_ID</td>
-<td>DOUBLE</td>
+<td>INT</td>
 </tr>
 
 <tr>

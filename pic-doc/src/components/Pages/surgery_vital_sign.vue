@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains vital signs recorded while a patient is present in the operating room.</p>
 
-<p><strong>Number of rows:</strong> 1,299,369</p>
+<p><strong>Number of rows:</strong> 1,216,011</p>
 
 <p><strong>Links to:</strong></p>
 

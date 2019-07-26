@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Symptoms extracted from notes.</p>
 
-<p><strong>Number of rows:</strong> 763,899</p>
+<p><strong>Number of rows:</strong> 402,142</p>
 
 <p><strong>Links to:</strong></p>
 

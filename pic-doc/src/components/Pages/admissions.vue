@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Define a patient’s hospital admission, HADM_ID.</p>
 
-<p><strong>Number of rows:</strong> 15,033</p>
+<p><strong>Number of rows:</strong> 13,449</p>
 
 <p><strong>Links to:</strong></p>
 

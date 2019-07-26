@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains ICD diagnoses for patients, most notably ICD-10 diagnoses.</p>
 
-<p><strong>Number of rows:</strong> 13,970</p>
+<p><strong>Number of rows:</strong> 13,365</p>
 
 <p><strong>Links to:</strong></p>
 

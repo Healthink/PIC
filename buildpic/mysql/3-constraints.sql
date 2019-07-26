@@ -7,6 +7,18 @@
 -- The below command defines the schema where the data should reside
 use pic;
 
+-- ------------
+-- ADMISSIONS--
+-- ------------
+
+-- subject_id
+ALTER TABLE ADMISSIONS DROP FOREIGN KEY admissions_fk_subject_id;
+ALTER TABLE ADMISSIONS
+ADD CONSTRAINT admissions_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
 -- ---------------
 -- CHARTEVENTS--
 -- ---------------
@@ -68,6 +80,14 @@ ADD CONSTRAINT diagnoses_icd_fk_icd10_code_cn
 -- EMR_SYMPTOMS--
 -- ---------------
 
+-- subject_id
+ALTER TABLE EMR_SYMPTOMS DROP FOREIGN KEY emr_symptoms_fk_subject_id;
+ALTER TABLE EMR_SYMPTOMS
+ADD CONSTRAINT emr_symptoms_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
 -- hadm_id
 ALTER TABLE EMR_SYMPTOMS DROP FOREIGN KEY emr_symptoms_fk_hadm_id;
 ALTER TABLE EMR_SYMPTOMS
@@ -79,6 +99,14 @@ ADD CONSTRAINT emr_symptoms_fk_hadm_id
 -- ---------------
 -- ICUSTAYS--
 -- ---------------
+
+-- subject_id
+ALTER TABLE ICUSTAYS DROP FOREIGN KEY icustays_fk_subject_id;
+ALTER TABLE ICUSTAYS
+ADD CONSTRAINT icustays_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
 
 -- hadm_id
 ALTER TABLE ICUSTAYS DROP FOREIGN KEY icustays_fk_hadm_id;
@@ -198,6 +226,14 @@ ADD CONSTRAINT outputevents_fk_itemid
 -- ---------------
 -- PRESCRIPTIONS--
 -- ---------------
+
+-- subject_id
+ALTER TABLE PRESCRIPTIONS DROP FOREIGN KEY prescriptions_fk_subject_id;
+ALTER TABLE PRESCRIPTIONS
+ADD CONSTRAINT prescriptions_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
 
 -- hadm_id
 ALTER TABLE PRESCRIPTIONS DROP FOREIGN KEY prescriptions_fk_hadm_id;

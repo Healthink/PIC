@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Defines each ICUSTAY_ID in the database, i.e. defines a single ICU stay.</p>
 
-<p><strong>Number of rows:</strong> 14,007</p>
+<p><strong>Number of rows:</strong> 13,941</p>
 
 <p><strong>Links to:</strong></p>
 

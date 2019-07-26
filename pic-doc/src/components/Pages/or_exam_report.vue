@@ -12,7 +12,7 @@
 
 <p><strong>Table purpose:</strong> Contains all exam for patients.</p>
 
-<p><strong>Number of rows:</strong> 195,827</p>
+<p><strong>Number of rows:</strong> 183,809</p>
 
 <p><strong>Links to:</strong></p>
 
