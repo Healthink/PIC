@@ -55,7 +55,7 @@ block content
                 type: "GET",
                 success: function (data) {
                     for (var items in data) {
-                        TopDiseaseCategory.push(data[items].TITLE_EN);
+                        TopDiseaseCategory.push(data[items].TITLE);
                         TopDiseaseValue.push(data[items].value);
                     }
                     ShowTopDiseaseChart();
