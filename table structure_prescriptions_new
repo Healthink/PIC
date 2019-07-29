@@ -1,0 +1,42 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 120.55.170.231
+ Source Server Type    : MySQL
+ Source Server Version : 50554
+ Source Host           : 120.55.170.231:3306
+ Source Schema         : pMIMIC_NEW
+
+ Target Server Type    : MySQL
+ Target Server Version : 50554
+ File Encoding         : 65001
+
+ Date: 29/07/2019 10:01:41
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for prescriptions_new
+-- ----------------------------
+DROP TABLE IF EXISTS `prescriptions_new`;
+CREATE TABLE `prescriptions_new`  (
+  `ROW_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `SUBJECT_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `HADM_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `ICUSTAY_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `STARTDATE` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `ENDDATE` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DRUG_NAME` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DRUG_NAME_EN` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `PROD_STRENGTH` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DRUG_NAME_GENERIC` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DOSE_VAL_RX` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DOSE_UNIT_RX` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `DRUG_FORM` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  INDEX `SUBJECT_ID`(`SUBJECT_ID`(191)) USING BTREE,
+  INDEX `ICUSTAY_ID`(`ICUSTAY_ID`(191)) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;
