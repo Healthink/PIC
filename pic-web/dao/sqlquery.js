@@ -21,7 +21,7 @@ var user = {
     queryICULOS:'select floor(LOS),count(*) as value from icustay where LOS >=0 and LOS <30 group by floor(LOS)',
     queryPatients:'SELECT GENDER,count(*) as value FROM patients_new where GENDER =\'F\' or GENDER =\'M\' group by GENDER',
     queryPatientAge:'SELECT TIMESTAMPDIFF(YEAR,p.DOB,s.INTIME) as age,count(*) as value FROM icustay as s, patients_new as p where p.SUBJECT_ID = s.SUBJECT_ID  group by TIMESTAMPDIFF(YEAR,p.DOB,s.INTIME)',
-    queryTopDisease:'SELECT dd.TITLE_EN,count(*) as value FROM admissions d,D_ICD_DIAGNOSES_CN dd where dd.ICD10 = d.ICD10_CODE group by dd.TITLE_EN order by count(*) desc limit 10',
+    queryTopDisease:'SELECT dd.TITLE,count(*) as value FROM admissions d,D_ICD_DIAGNOSES dd where dd.ICD10_CODE_CN = d.ICD10_CODE group by dd.TITLE order by count(*) desc limit 10',
 
     // queryDiagTerms:"SELECT ICD9_CODE, SHORT_TITLE  FROM pMIMIC.D_ICD_DIAGNOSES where short_title like '{0}%' limit  10",
     // queryProcedureTerms:"SELECT ICD9_CODE, SHORT_TITLE FROM pMIMIC.D_ICD_PROCEDURES where SHORT_TITLE like '{0}%' limit 10",
