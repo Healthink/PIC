@@ -5,6 +5,7 @@ block content
     html(lang='zh-CN')
         head
             meta(charset='utf-8')
+            link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
 
 
@@ -12,37 +13,35 @@ block content
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
     script(src='/javascripts/jquery-1.11.0.min.js')
 
-
     script(src='/javascripts/highcharts.js')
     script(src='/javascripts/highcharts-more.js')
-    //script(src='https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js')
     script(src='/javascripts/xrange.js')
     script(src='/javascripts/exporting.js')
     script(src='/javascripts/series-label.js')
-
+        
+    link(rel='shortcut icon', href='http://static.tmimgcdn.com/img/favicon.ico')
+    link(rel='icon', href='http://static.tmimgcdn.com/img/favicon.ico')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
+
 
     div(style="width: 1000px; margin: 50px 200px;")
 
         ul(id="position")
 
     body
-        div(style='height:800px;min-width: 300px;max-width: 1500px;margin: 1em auto;', id="labchart")
+        div(style='height:800px;min-width: 300px;max-width: 1500px;margin: 1em auto;', id="timechart4")
+
 
     script(type='text/javascript').
         function search_graph_emrsymptom(Term4) {
-        //var Term =
-        !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_emrsymptom/list",
                 type: "POST",
                 data: {term: Term4},
-
+                
                 success: function (data) {
-
-
                     var symcategory = [];
                     var symcategory_p = [];
                     var symcategory_n = [];
@@ -53,47 +52,33 @@ block content
                     var starttime = [];
                     var starttime_p = [];
                     var starttime_n = [];
-                    var endtime = [];
                     var attribute = [];
                     var attribute_p = [];
                     var attribute_n = [];
 
-
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
-
                     } else {
-                        //alert("Success!");
-
                         ////////EMR SYMPTOM DATA/////////
-
-
                         var c = 0;
-
                         for (var q = 0; q < data.length; q++) {
                             symcategory[c] = [data[q].SYMPTOM_NAME_EN];
                             starttime[c] = [data[q].RECORD_TIME];
-                            // endtime[c] = [data[q].RECORDTIME]; //都是点时间，直接设定endtime
                             attribute[c] = [data[q].SYMPTOM_ATTRIBUTE];
                             c++;
                         }
-
-                        //删除重复元素
                         for (var i = 0; i < data.length; i++) {
                             if (!obj[symcategory[i]]) {
-                                symresult.push(symcategory[i]);//symresult存储不重复症状名
+                                symresult.push(symcategory[i]);
                                 obj[symcategory[i]] = true;
                             }
                         }
-                        symresult.sort(); //将症状名称显示按照自上至下的字母顺序重排
+                        symresult.sort(); //Display symptom names in alphabetical order from top to bottom
 
-
-                        //将症状分为两个series显示，所以先分成两个单独的数组group
                         var index_p = 0
                         var index_n = 0
                         for (var m = 0; m < c; m++) {
-                            if (attribute[m][0].indexOf('+') == 0) {  //array中的element为+ (不存在则为-1)
+                            if (attribute[m][0].indexOf('+') == 0) {
                                 symcategory_p[index_p] = symcategory[m];
                                 starttime_p[index_p] = starttime[m];
                                 attribute_p[index_p] = attribute[m];
@@ -104,18 +89,15 @@ block content
                                 attribute_n[index_n] = attribute[m];
                                 index_n++;
                             }
-
                         }
 
-
                         for (var r = 0; r < index_p; r++) {
-                            var stp = starttime_p[r][0]
-                            var tp = new Date(stp)
-                            var endtime_p = tp.setHours(tp.getHours() + 1)
+                            for (var u = symcategory_p.length - 1; u >= 0; u--) {
+                                if (symcategory_p[r][0] == symcategory_p[u][0]) break;
+                            }
                             arrData_p[r] = {
                                 x: Date.UTC(chGMT(starttime_p[r][0]).slice(0, 4), chGMT(starttime_p[r][0]).slice(5, 7) - 1, chGMT(starttime_p[r][0]).slice(8, 10), chGMT(starttime_p[r][0]).slice(11, 13), chGMT(starttime_p[r][0]).slice(14, 16), chGMT(starttime_p[r][0]).slice(17, 19)),
-                                // x2: Date.UTC(chGMT(starttime_p[r][0]).slice(0, 4), chGMT(starttime_p[r][0]).slice(5, 7) - 1, chGMT(starttime_p[r][0]).slice(8, 10), chGMT(starttime_p[r][0]).slice(11, 13), chGMT(starttime_p[r][0]).slice(14, 16), chGMT(starttime_p[r][0]).slice(17, 19)+60),
-                                x2: Date.UTC(chGMT(endtime_p).slice(0, 4), chGMT(endtime_p).slice(5, 7) - 1, chGMT(endtime_p).slice(8, 10), chGMT(endtime_p).slice(11, 13), chGMT(endtime_p).slice(14, 16), chGMT(endtime_p).slice(17, 19)),
+                                x2: Date.UTC(chGMT(starttime_p[u][0]).slice(0, 4), chGMT(starttime_p[u][0]).slice(5, 7) - 1, chGMT(starttime_p[u][0]).slice(8, 10), chGMT(starttime_p[u][0]).slice(11, 13), chGMT(starttime_p[u][0]).slice(14, 16), chGMT(starttime_p[u][0]).slice(17, 19)),
                                 y: in_array(symcategory_p[r], symresult),
                                 sym: symcategory_p[r][0],
                                 attribute: attribute_p[r],
@@ -123,13 +105,12 @@ block content
                             }
                         }
                         for (var r = 0; r < index_n; r++) {
-                            var stn = starttime_n[r][0]
-                            var tn = new Date(stn)
-                            var endtime_n = tn.setHours(tn.getHours() + 1)
+                            for (var v = symcategory_n.length - 1; v >= 0; v--) {
+                                if (symcategory_n[r][0] == symcategory_n[v][0]) break;
+                            }
                             arrData_n[r] = {
                                 x: Date.UTC(chGMT(starttime_n[r][0]).slice(0, 4), chGMT(starttime_n[r][0]).slice(5, 7) - 1, chGMT(starttime_n[r][0]).slice(8, 10), chGMT(starttime_n[r][0]).slice(11, 13), chGMT(starttime_n[r][0]).slice(14, 16), chGMT(starttime_n[r][0]).slice(17, 19)),
-                                // x2: Date.UTC(chGMT(starttime_n[r][0]).slice(0, 4), chGMT(starttime_n[r][0]).slice(5, 7) - 1, chGMT(starttime_n[r][0]).slice(8, 10), chGMT(starttime_n[r][0]).slice(11, 13), chGMT(starttime_n[r][0]).slice(14, 16), chGMT(starttime_n[r][0]).slice(17, 19)+60),
-                                x2: Date.UTC(chGMT(endtime_n).slice(0, 4), chGMT(endtime_n).slice(5, 7) - 1, chGMT(endtime_n).slice(8, 10), chGMT(endtime_n).slice(11, 13), chGMT(endtime_n).slice(14, 16), chGMT(endtime_n).slice(17, 19)),
+                                x2: Date.UTC(chGMT(starttime_n[v][0]).slice(0, 4), chGMT(starttime_n[v][0]).slice(5, 7) - 1, chGMT(starttime_n[v][0]).slice(8, 10), chGMT(starttime_n[v][0]).slice(11, 13), chGMT(starttime_n[v][0]).slice(14, 16), chGMT(starttime_n[v][0]).slice(17, 19)),
                                 y: in_array(symcategory_n[r], symresult),
                                 sym: symcategory_n[r][0],
                                 attribute: attribute_n[r],
@@ -139,8 +120,6 @@ block content
 
 
                         $(function () {
-
-                            //同步缩放效果
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -154,7 +133,6 @@ block content
                                 }
                             }
 
-                            //症状显示
                             Highcharts.chart('timechart4', {
                                 chart: {
                                     type: 'xrange',
@@ -162,8 +140,6 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
-
-
                                 },
                                 title: {
                                     text: 'EMR SYMPTOM-HADMID: ' + Term4 + ' EMRID: ' + data[0].EMR_ID
@@ -171,8 +147,6 @@ block content
                                 subtitle: {
                                     text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                                 },
-
-
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
@@ -181,33 +155,23 @@ block content
                                     title: {
                                         text: 'Time In Hospital'
                                     }
-
-
                                 },
-
                                 yAxis: [{
                                     title: {
                                         text: ''
                                     },
-                                    categories: symresult,//y轴的值
-                                    reversed: true,//y轴值上下顺序反向
+                                    categories: symresult,
+                                    reversed: true,
                                     tickInterval: 1
                                 }],
 
-
-                                tooltip: {//label样式
-
+                                tooltip: {
                                     headerFormat: '<b>Record Time:</b>{point.x:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Symptom Name:</b>{point.sym}<br><b>Attribute:</b>{point.attribute}<br>',
                                     positioner: function () {//固定标签显示位置
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
-
-                                    crosshairs: [{            // 设置准星线样式
+                                    crosshairs: [{
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -219,44 +183,37 @@ block content
                                     }]
 
                                 },
-
-
-                                legend: {//图例右侧显示
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
 
-
                                 },
-
-
                                 series: [{
                                     name: 'Symptoms+',
                                     dashStyle: 'solid',
-                                    pointWidth: 5,
+                                    pointWidth: 2,
                                     data: arrData_p,
+                                    color: '#ffc1c1',
                                     dataLabels: {
                                         enabled: true,
                                         defer: false,
                                         inside: true,
                                         align: 'center'
-                                        // format: '{point.attribute}'
                                     }
-
                                 },
                                     {
                                         name: 'Symptoms-',
                                         dashStyle: 'solid',
-                                        pointWidth: 5,
+                                        pointWidth: 2,
                                         data: arrData_n,
+                                        color: '#b1a8ad',
                                         dataLabels: {
                                             enabled: true,
                                             defer: false,
                                             inside: true,
                                             align: 'center'
-                                            // format: '{point.attribute}'
                                         }
-
                                     }]
                             });
                         });
@@ -264,6 +221,33 @@ block content
                 }
             })
         }
+        (function (H) {
+            H.Legend.prototype.getAllItems = function () {
+                var allItems = [];
+                H.each(this.chart.series, function (series) {
+                    var seriesOptions = series && series.options;
+                    if (series.type === 'xrange') {
+                        series.color = series.userOptions.color
+                    }
+                    if (series && H.pick(
+                        seriesOptions.showInLegend,
+                        !H.defined(seriesOptions.linkedTo) ? undefined : false, true
+                    )) {
+                        allItems = allItems.concat(
+                            series.legendItems ||
+                            (
+                                seriesOptions.legendType === 'point' ?
+                                    series.data :
+                                    series
+                            )
+                        );
+                    }
+                });
+
+                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
+                return allItems;
+            }
+        })(Highcharts)
 
         Date.prototype.format = function (format) {
             var o = {
@@ -284,29 +268,18 @@ block content
         }
 
         function chGMT(gmtDate) {
-            var mydate = new Date(gmtDate);
-            mydate.setHours(mydate.getHours());
-            return mydate.format("yyyy-MM-dd hh:mm:ss");
+            return gmtDate;
         }
         function in_array(searchString, array) {
             for (var i = 0; i < array.length; i++) {
                 if (searchString == array[i][0]) return i;
             }
-            //return false;
         }
-
-
-
-
-
-
 
 
         window.onload = function () {
 
-
-            search_graph_lab();
-
+            search_graph_emrsymptom();
 
 
         }
