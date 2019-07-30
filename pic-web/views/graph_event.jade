@@ -5,7 +5,7 @@ bl ock content
     html(lang='zh-CN')
         head
             meta(charset='utf-8')
-
+            link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
 
 
@@ -19,6 +19,7 @@ bl ock content
     script(src="https://www.amcharts.com/lib/3/themes/light.js")
 
 
+
     div(style="width: 1000px; margin: 50px 200px;")
 
         ul(id="position")
@@ -27,112 +28,463 @@ bl ock content
         div(id="chartdiv" style="height: 80px;")
 
 
-
     script(type='text/javascript').
         function search_graph_event() {
             var Term = !{JSON.stringify(term)};
             $.ajax({
-                url: "/search/graph_event/list",
+                url: "/search/id/event",
                 type: "POST",
                 data: {term: Term},
 
                 success: function (data) {
-
-                    if (data == '') {
-                        alert("No corresponding data!");
+                    if (data[0] == '') {
                     } else {
-                        //alert("success");
-
-
-                        var chart = AmCharts.makeChart("chartdiv", {
-                            "type": "serial",
-                            "theme": "light",
-                            "marginTop": 50,
-                            "plotAreaBorderAlpha": 1,
-                            "plotAreaBorderColor": "#ed6c2d",
-                            "plotAreaFillrAlpha": 1,
-                            "plotAreaFillColors": "#ed6c2d",
-                            "dataProvider": [{
-                                // Need at least one empty data item
-                            }],
-                            "zoomOutText": "",
-                            "dataDateFormat": "YYYY-MM-DD",
-                            "valueAxes": [{
-                                "type": "date",
-                                "gridAlpha": 0,
-                                "axisColor": "#ed6c2d",
-                                "axisThickness": 2,
-                                "boldPeriodBeginning": false,
-                                "tickLength": 20,
-                                "minHorizontalGap": 70,
-                                "centerLabelOnFullPeriod": false,
-                                "minimumDate": "2016-01-01",
-                                "maximumDate": "2016-12-31",
-                                "dateFormats": [{
-                                    period: 'DD',
-                                    format: 'MMM DD'
-                                }, {
-                                    period: 'WW',
-                                    format: 'MMM DD'
-                                }, {
-                                    period: 'MM',
-                                    format: 'MMMM'
-                                }, {
-                                    period: 'YYYY',
-                                    format: 'YYYY'
-                                }],
-                                "guides": [{
-                                    "value": new Date(2016, 2, 5),
-                                    "label": "admit",
-                                    "position": "top",
-                                    "fontSize": 15,
-                                    "tickLength": 15
-                                }, {
-                                    "value": new Date(2016, 4, 1),
-                                    "label": "transfer",
-                                    "position": "top",
-                                    "fontSize": 15,
-                                    "tickLength": 15
-                                }, {
-                                    "value": new Date(2016, 6, 22),
-                                    "label": "service",
-                                    "position": "top",
-                                    "fontSize": 15,
-                                    "tickLength": 15
-                                }, {
-                                    "value": new Date(2016, 11, 1),
-                                    "label": "discharge",
-                                    "position": "top",
-                                    "fontSize": 15,
-                                    "tickLength": 15,
-                                    "color": "#ed6c2d"
-                                }]
-                            }],
-                            "startDuration": 1,
-                            "graphs": [{
-                                // Need to have at least one empty graph
-                            }],
-                            "rotate": true,
-                            "columnWidth": 1,
-                            "categoryField": "category",
-                            "categoryAxis": {
-                                "gridAlpha": 0,
-                                "position": "left",
-                                "labelsEnabled": false,
-                                "tickLength": 0
-                            },
-                            "creditsPosition": "bottom-left"
+                        //data0:admission,discharge,transfer;data1:surgery
+                        if (typeof data[0][0].MONITOR_TIME == "undefined") {
+                            var data0 = data[0]
+                            var data1 = data[1]
+                        } else {
+                            data1 = data[0]
+                            data0 = data[1]
+                        }
+                        
+                        var surgeryFlag = 0
+                        var transferFlag = 0;
+                        var dataset = [];
+                        var transfer = [{
+                            HADM_ID: data0[0].HADM_ID,
+                            ICUSTAY_ID: data0[0].ICUSTAY_ID,
+                            EVENTTYPE: 'transfer',
+                            CURR_CAREUNIT: data0[0].LAST_CAREUNIT,
+                            CURR_WARDID: data0[0].LAST_WARDID,
+                            INTIME: data0[0].INTIME,
+                            OUTTIME: data0[0].OUTTIME
+                        }];
+                        transfer.push({
+                            HADM_ID: data0[0].HADM_ID,
+                            ICUSTAY_ID: data0[0].ICUSTAY_ID,
+                            EVENTTYPE: 'admit',
+                            CURR_CAREUNIT: data0[0].ADMISSION_LOCATION,
+                            CURR_WARDID: null,
+                            INTIME: data0[0].ADMITTIME,
+                            OUTTIME: null
                         });
+                        transfer.push({
+                            HADM_ID: data0[0].HADM_ID,
+                            ICUSTAY_ID: data0[0].ICUSTAY_ID,
+                            EVENTTYPE: 'discharge',
+                            CURR_CAREUNIT: data0[0].DISCHARGE_LOCATION,
+                            CURR_WARDID: null,
+                            INTIME: null,
+                            OUTTIME: data0[0].DISCHTIME
+                        });
+                        var admit = [];
+                        var discharge = [];
+                        var icu = [];
+                        var icustay = [];
 
 
+                        for (var s = 0; s < data0.length; s++) {
+                            var arr1 = {
+                                HADM_ID: data0[s].HADM_ID,
+                                ICUSTAY_ID: data0[s].ICUSTAY_ID,
+                                EVENTTYPE: 'transfer',
+                                CURR_CAREUNIT: data0[s].LAST_CAREUNIT,
+                                CURR_WARDID: data0[s].LAST_WARDID,
+                                INTIME: data0[s].INTIME,
+                                OUTTIME: data0[s].OUTTIME
+                            }
+                            var arr2 = {
+                                HADM_ID: data0[s].HADM_ID,
+                                ICUSTAY_ID: data0[s].ICUSTAY_ID,
+                                EVENTTYPE: 'admit',
+                                CURR_CAREUNIT: data0[s].ADMISSION_LOCATION,
+                                CURR_WARDID: null,
+                                INTIME: data0[s].ADMITTIME,
+                                OUTTIME: null
+                            }
+                            var arr3 = {
+                                HADM_ID: data0[s].HADM_ID,
+                                ICUSTAY_ID: data0[s].ICUSTAY_ID,
+                                EVENTTYPE: 'discharge',
+                                CURR_CAREUNIT: data0[s].DISCHARGE_LOCATION,
+                                CURR_WARDID: null,
+                                INTIME: null,
+                                OUTTIME: data0[s].DISCHTIME
+                            }
 
 
+                            for (var r = 0; r < transfer.length; r++) {
+                                if (isObjEqual(arr1, transfer[r])) transferFlag = 1;
+                            }
+
+                            if (transferFlag == 0) transfer.push(arr1);
+                            transferFlag = 0;
+
+                            for (var r = 0; r < transfer.length; r++) { //排除icustayid不同，其他相同 --> 导致多余admit/discharge数据的情况
+                                if (arr2.HADM_ID == transfer[r].HADM_ID && arr2.EVENTTYPE == transfer[r].EVENTTYPE && arr2.CURR_CAREUNIT == transfer[r].CURR_CAREUNIT && arr2.CURR_WARDID == transfer[r].CURR_WARDID && arr2.INTIME == transfer[r].INTIME && arr2.OUTTIME == transfer[r].OUTTIME) transferFlag = 1;
+                            }
+                            if (transferFlag == 0) transfer.push(arr2);
+                            transferFlag = 0;
+
+                            for (var r = 0; r < transfer.length; r++) {
+                                if (arr3.HADM_ID == transfer[r].HADM_ID && arr3.EVENTTYPE == transfer[r].EVENTTYPE && arr3.CURR_CAREUNIT == transfer[r].CURR_CAREUNIT && arr3.CURR_WARDID == transfer[r].CURR_WARDID && arr3.INTIME == transfer[r].INTIME && arr3.OUTTIME == transfer[r].OUTTIME) transferFlag = 1;
+                            }
+                            if (transferFlag == 0) transfer.push(arr3);
+                            transferFlag = 0;
+                        }
+
+                        //patients with surgery records
+                        if (data1 != '') {
+                            var surgery = [{
+                                HADM_ID: data1[0].HADM_ID,
+                                MONITOR_TIME: data1[0].MONITOR_TIME,
+                                OPER_ID: data1[0].OPER_ID
+                            }];
+
+                            for (var p = 0; p < data1.length; p++) {  //surgery单独列出
+                                for (var q = 0; q < surgery.length; q++) {
+                                    if (data1[p].HADM_ID == surgery[q].HADM_ID && data1[p].MONITOR_TIME == surgery[q].MONITOR_TIME && data1[p].OPER_ID == surgery[q].OPER_ID) surgeryFlag = 1;
+                                }
+                                if (surgeryFlag == 0) surgery.push({
+                                    HADM_ID: data1[p].HADM_ID,
+                                    MONITOR_TIME: data1[p].MONITOR_TIME,
+                                    OPER_ID: data1[p].OPER_ID
+                                });
+                                surgeryFlag = 0;
+                            }
+
+                            var hadmid = [data1[0].HADM_ID]
+                            var operid = [data1[0].OPER_ID];
+                            var surgery_s = [data1[0].MONITOR_TIME];
+                            var surgery_e = [];
+
+                            for (var s = 0; s < surgery.length; s++) {
+                                if (in_array(surgery[s].OPER_ID, operid) == -1) {
+                                    hadmid.push(surgery[s].HADM_ID)
+                                    operid.push(surgery[s].OPER_ID);
+                                    surgery_s.push(surgery[s].MONITOR_TIME);
+                                    surgery_e.push(surgery[s - 1].MONITOR_TIME);
+                                } else {
+                                    continue;
+                                }
+                            }
+                            surgery_e.push(surgery[surgery.length - 1].MONITOR_TIME);
+                            for (var s = 0; s < operid.length; s++) {
+                                dataset.push({
+                                    start: new Date(Number(chGMT(surgery_s[s]).slice(0, 4)), Number(chGMT(surgery_s[s]).slice(5, 7) - 1), Number(chGMT(surgery_s[s]).slice(8, 10)), Number(chGMT(surgery_s[s]).slice(11, 13)), Number(chGMT(surgery_s[s]).slice(14, 16)), Number(chGMT(surgery_s[s]).slice(17, 19))),
+                                    content: 'Operation_id=' + operid[s] + '<br><button onclick="search_graph_surgeryvital(' + hadmid[s] + ',' + operid[s] + ')">surgery vitals</button>',
+                                    title: 'Duration: From' + Number(chGMT(surgery_s[s]).slice(0, 4)) + '.' + Number(chGMT(surgery_s[s]).slice(5, 7)) + '.' + Number(chGMT(surgery_s[s]).slice(8, 10)) + ' ' + chGMT(surgery_s[s]).slice(11, 13) + ':' + chGMT(surgery_s[s]).slice(14, 16) + ':' + chGMT(surgery_s[s]).slice(17, 19) + ' To ' + Number(chGMT(surgery_e[s]).slice(0, 4)) + '.' + Number(chGMT(surgery_e[s]).slice(5, 7)) + '.' + Number(chGMT(surgery_e[s]).slice(8, 10)) + ' ' + chGMT(surgery_e[s]).slice(11, 13) + ':' + chGMT(surgery_e[s]).slice(14, 16) + ':' + chGMT(surgery_e[s]).slice(17, 19),
+                                    className: 'lightgreen',
+                                    group: 2
+                                });
+                            }
+
+                            var groups = new vis.DataSet([
+                                {id: 0, content: 'Admission<br>&Discharge', value: 4},
+                                {id: 1, content: 'Transfers', value: 3},
+                                {id: 2, content: 'Surgery', value: 2},
+                                {id: 3, content: 'ICUSTAY<br>' + 'ID', value: 1},
+                                {id: 4, content: 'HADM<br>' + 'ID', value: 0}
+                            ]);
+                        }
+
+                        //patients without surgery records
+                        else {
+                            var groups = new vis.DataSet([
+                                {id: 0, content: 'Admission<br>&Discharge', value: 4},
+                                {id: 1, content: 'Transfers', value: 3},
+                                {id: 3, content: 'ICUSTAY<br>' + 'ID', value: 1},
+                                {id: 4, content: 'HADM<br>' + 'ID', value: 0}
+
+                            ]);
+                        }
+
+                        for (var t = 0; t < transfer.length; t++) {//icu,含对应不同IN、OUTTIME的重复id项
+
+                            if (transfer[t].ICUSTAY_ID != null) {
+                                icu.push({
+                                    INTIME: transfer[t].INTIME,
+                                    OUTTIME: transfer[t].OUTTIME,
+                                    ICUSTAY_ID: transfer[t].ICUSTAY_ID
+
+                                })
+                            }
+
+                            if (transfer[t].EVENTTYPE == 'admit' || transfer[t].EVENTTYPE == 'discharge') {//admit discharge
 
 
+                                if (transfer[t].EVENTTYPE == 'admit') {
+                                    admit.push({
+                                        HADM_ID: transfer[t].HADM_ID,
+                                        EVENTTYPE: transfer[t].EVENTTYPE,
+                                        INTIME: transfer[t].INTIME
+                                    })
+                                }
+                                if (transfer[t].EVENTTYPE == 'discharge') {
+                                    discharge.push({
+                                        HADM_ID: transfer[t].HADM_ID,
+                                        EVENTTYPE: transfer[t].EVENTTYPE,
+                                        OUTTIME: transfer[t].OUTTIME
+                                    })
+                                }
+                                if (transfer[t].EVENTTYPE == 'transfer') {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        content: transfer[t].EVENTTYPE + '<br>to Unit ' + transfer[t].CURR_CAREUNIT + ' Ward ' + transfer[t].CURR_WARDID,
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        className: 'red',
+                                        group: 0
+                                    });
+                                }
 
+                                if (transfer[t].EVENTTYPE == 'admit') {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        content: transfer[t].EVENTTYPE + '<br>in Unit ' + transfer[t].CURR_CAREUNIT,
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        className: 'red',
+                                        group: 0
+                                    });
+                                }
+                                if (transfer[t].EVENTTYPE == 'discharge') {
+                                    if ((transfer[t].OUTTIME) != null) {
+                                        dataset.push({
+                                            start: new Date(Number(chGMT(transfer[t].OUTTIME).slice(0, 4)), Number(chGMT(transfer[t].OUTTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].OUTTIME).slice(8, 10)), Number(chGMT(transfer[t].OUTTIME).slice(11, 13)), Number(chGMT(transfer[t].OUTTIME).slice(14, 16)), Number(chGMT(transfer[t].OUTTIME).slice(17, 19))),
+                                            content: transfer[t].EVENTTYPE + '<br>from Unit ' + transfer[t].CURR_CAREUNIT,
+                                            title: 'Time:' + Number(chGMT(transfer[t].OUTTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].OUTTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].OUTTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].OUTTIME).slice(11, 13) + ':' + chGMT(transfer[t].OUTTIME).slice(14, 16) + ':' + chGMT(transfer[t].OUTTIME).slice(17, 19),
+                                            className: 'red',
+                                            group: 0
+                                        });
+                                    }
+
+                                }
+
+                            }
+                            //transfer
+                            else {
+                                if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID != null) {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        content: 'Transfer to Unit ' + transfer[t].CURR_CAREUNIT + ' Ward ' + transfer[t].CURR_WARDID,
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        group: 1
+                                    });
+                                } else if (transfer[t].CURR_CAREUNIT == null && transfer[t].CURR_WARDID != null) {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        content: 'Transfer to Ward ' + transfer[t].CURR_WARDID,
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        group: 1
+                                    });
+                                } else if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID == null) {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        content: 'Transfer to Unit ' + transfer[t].CURR_CAREUNIT,
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        group: 1
+                                    });
+                                } else {
+                                    dataset.push({
+                                        start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
+                                        title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
+                                        group: 1
+                                    });
+                                }
+                            }
+                        }
+
+
+                        var icustayId = [icu[0].ICUSTAY_ID];
+                        for (var u = 0; u < icu.length; u++) {
+                            var icuflag = 0;
+                            for (var v = 0; v < icustayId.length; v++) {
+                                if (icu[u].ICUSTAY_ID == icustayId[v]) {
+                                    icuflag = 1
+                                }
+                            }
+                            if (icuflag == 0) {
+                                icustayId.push(icu[u].ICUSTAY_ID)
+                            }
+                        }
+
+                        for (var v = 0; v < icustayId.length; v++) {
+                            var intime = [];
+                            var outtime = [];
+                            for (var u = 0; u < icu.length; u++) {
+                                if (icu[u].ICUSTAY_ID == icustayId[v]) {
+                                    intime.push(icu[u].INTIME);
+                                    outtime.push(icu[u].OUTTIME);
+                                }
+                            }
+                            icustay.push({
+                                INTIME: intime[0],
+                                OUTTIME: outtime[outtime.length - 1],
+                                ICUSTAY_ID: icustayId[v]
+                            })
+                        }
+
+                        //hospital admission & discharge background
+                        if (admit.length == discharge.length) {  //admission+discharge
+                            for (var o = 0; o < admit.length; o++) {
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        content: 'HADM ID: ' + admit[o].HADM_ID + '<br><button onclick= "search_graph_lab(' + admit[o].HADM_ID + '); ">' + 'lab test' + '</button><button onclick= search_graph_emrsymptom(' + admit[o].HADM_ID + ')>' + 'emr symptoms' + '</button>',
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 4
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 3
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 2
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 1
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 0
+                                    }
+                                )
+                            }
+                        }
+
+                        if (admit.length - discharge.length == 1) {  //lack of last discharge record
+                            for (var o = 0; o < discharge.length; o++) {
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        content: 'HADM ID: ' + admit[o].HADM_ID + '<br><button  onclick= "search_graph_lab(' + admit[o].HADM_ID + ');">' + 'lab test' + '</button><button id="buttonemrsymptom" onclick= search_graph_emrsymptom(' + admit[o].HADM_ID + ')>' + 'emr symptoms' + '</button>',
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 4
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 3
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 2
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 1
+                                    }
+                                )
+                                dataset.push(
+                                    {
+                                        start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
+                                        end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
+                                        type: 'background',
+                                        className: 'negative',
+                                        group: 0
+                                    }
+                                )
+                            }
+                        }
+
+                        //icustay background
+                        for (var o = 0; o < icustay.length; o++) {
+                            dataset.push(
+                                {
+                                    start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
+                                    end: new Date(Number(chGMT(icustay[o].OUTTIME).slice(0, 4)), Number(chGMT(icustay[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].OUTTIME).slice(8, 10)), Number(chGMT(icustay[o].OUTTIME).slice(11, 13)), Number(chGMT(icustay[o].OUTTIME).slice(14, 16)), Number(chGMT(icustay[o].OUTTIME).slice(17, 19))),
+                                    content: 'ICUSTAY ID: ' + icustay[o].ICUSTAY_ID + '<br><button  onclick= "search_graph_sign(' + icustay[o].ICUSTAY_ID + ')">' + 'signs' + '</button><button  onclick= "search_graph_med(' + icustay[o].ICUSTAY_ID + ')">' + 'medication' + '</button>',
+                                    type: 'background',
+                                    group: 3
+                                }
+                            )
+                            dataset.push(
+                                {
+                                    start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
+                                    end: new Date(Number(chGMT(icustay[o].OUTTIME).slice(0, 4)), Number(chGMT(icustay[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].OUTTIME).slice(8, 10)), Number(chGMT(icustay[o].OUTTIME).slice(11, 13)), Number(chGMT(icustay[o].OUTTIME).slice(14, 16)), Number(chGMT(icustay[o].OUTTIME).slice(17, 19))),
+                                    type: 'background',
+                                    group: 2
+                                }
+                            )
+                            dataset.push(
+                                {
+                                    start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
+                                    end: new Date(Number(chGMT(icustay[o].OUTTIME).slice(0, 4)), Number(chGMT(icustay[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].OUTTIME).slice(8, 10)), Number(chGMT(icustay[o].OUTTIME).slice(11, 13)), Number(chGMT(icustay[o].OUTTIME).slice(14, 16)), Number(chGMT(icustay[o].OUTTIME).slice(17, 19))),
+                                    type: 'background',
+                                    group: 1
+                                }
+                            )
+                            dataset.push(
+                                {
+                                    start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
+                                    end: new Date(Number(chGMT(icustay[o].OUTTIME).slice(0, 4)), Number(chGMT(icustay[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].OUTTIME).slice(8, 10)), Number(chGMT(icustay[o].OUTTIME).slice(11, 13)), Number(chGMT(icustay[o].OUTTIME).slice(14, 16)), Number(chGMT(icustay[o].OUTTIME).slice(17, 19))),
+                                    type: 'background',
+                                    group: 0
+                                }
+                            )
+                        }
+
+                        // vis timeline
+                        var chartdata = new vis.DataSet(dataset);
+                        var options = {
+                            editable: false,
+                            groupOrder: function (a, b) {
+                                return a.value - b.value;
+                            }
+                        };
+
+                        //fit items button
+                        var html0 = "<span>Supports zooming & moving with the mouse.Click to <input type='button' value='Fit all items' id='fit'></span><br><br>"
+                        $("#chartdiv").append($(html0));
+                        document.getElementById('fit').onclick = function () {
+                            timeline.fit();
+                        };
+
+                        // create the timeline
+                        var container = document.getElementById('chartdiv');
+                        var timeline = new vis.Timeline(container, chartdata, options, groups);
                     }
                 }
-
             })
         }
 
@@ -155,29 +507,17 @@ bl ock content
         }
 
         function chGMT(gmtDate) {
-            var mydate = new Date(gmtDate);
-            mydate.setHours(mydate.getHours());
-            return mydate.format("yyyy-MM-dd hh:mm:ss");
+            return gmtDate;
         }
         function in_array(searchString, array) {
             for (var i = 0; i < array.length; i++) {
                 if (searchString == array[i][0]) return i;
             }
-            //return false;
         }
-
-
-
-
-
-
 
 
         window.onload = function () {
 
-
             search_graph_event();
-
-
 
         }
