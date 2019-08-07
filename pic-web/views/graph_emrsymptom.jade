@@ -132,6 +132,34 @@ block content
                                     });
                                 }
                             }
+                            
+                            (function (H) {
+                                H.Legend.prototype.getAllItems = function () {
+                                    var allItems = [];
+                                    H.each(this.chart.series, function (series) {
+                                        var seriesOptions = series && series.options;
+                                        if (series.type === 'xrange') {
+                                            series.color = series.userOptions.color
+                                        }
+                                        if (series && H.pick(
+                                            seriesOptions.showInLegend,
+                                            !H.defined(seriesOptions.linkedTo) ? undefined : false, true
+                                        )) {
+                                            allItems = allItems.concat(
+                                                series.legendItems ||
+                                                (
+                                                    seriesOptions.legendType === 'point' ?
+                                                        series.data :
+                                                        series
+                                                )
+                                            );
+                                        }
+                                    });
+
+                                    H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
+                                    return allItems;
+                                }
+                            })(Highcharts)
 
                             Highcharts.chart('timechart4', {
                                 chart: {
@@ -221,33 +249,7 @@ block content
                 }
             })
         }
-        (function (H) {
-            H.Legend.prototype.getAllItems = function () {
-                var allItems = [];
-                H.each(this.chart.series, function (series) {
-                    var seriesOptions = series && series.options;
-                    if (series.type === 'xrange') {
-                        series.color = series.userOptions.color
-                    }
-                    if (series && H.pick(
-                        seriesOptions.showInLegend,
-                        !H.defined(seriesOptions.linkedTo) ? undefined : false, true
-                    )) {
-                        allItems = allItems.concat(
-                            series.legendItems ||
-                            (
-                                seriesOptions.legendType === 'point' ?
-                                    series.data :
-                                    series
-                            )
-                        );
-                    }
-                });
-
-                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
-                return allItems;
-            }
-        })(Highcharts)
+        
 
         Date.prototype.format = function (format) {
             var o = {
