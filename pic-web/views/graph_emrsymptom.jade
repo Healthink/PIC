@@ -133,34 +133,6 @@ block content
                                 }
                             }
                             
-                            (function (H) {
-                                H.Legend.prototype.getAllItems = function () {
-                                    var allItems = [];
-                                    H.each(this.chart.series, function (series) {
-                                        var seriesOptions = series && series.options;
-                                        if (series.type === 'xrange') {
-                                            series.color = series.userOptions.color
-                                        }
-                                        if (series && H.pick(
-                                            seriesOptions.showInLegend,
-                                            !H.defined(seriesOptions.linkedTo) ? undefined : false, true
-                                        )) {
-                                            allItems = allItems.concat(
-                                                series.legendItems ||
-                                                (
-                                                    seriesOptions.legendType === 'point' ?
-                                                        series.data :
-                                                        series
-                                                )
-                                            );
-                                        }
-                                    });
-
-                                    H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
-                                    return allItems;
-                                }
-                            })(Highcharts)
-
                             Highcharts.chart('timechart4', {
                                 chart: {
                                     type: 'xrange',
@@ -277,6 +249,38 @@ block content
                 if (searchString == array[i][0]) return i;
             }
         }
+        (function (H) {
+            H.Legend.prototype.getAllItems = function () {
+                var allItems = [];
+                len = this.chart.series.length;
+                H.each(this.chart.series, function (series) {
+                    if (series == undefined) ;
+                    else {
+                        var seriesOptions = series && series.options;
+                        if (series.name === 'Symptoms+' || series.name === 'Symptoms-') {
+                            series.color = series.userOptions.color
+                        }
+                        if (series && H.pick(
+                            seriesOptions.showInLegend,
+                            !H.defined(seriesOptions.linkedTo) ? undefined : false, true
+                        )) {
+                            allItems = allItems.concat(
+                                series.legendItems ||
+                                (
+                                    seriesOptions.legendType === 'point' ?
+                                        series.data :
+                                        series
+                                )
+                            );
+                        }
+                    }
+
+                });
+
+                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
+                return allItems;
+            }
+        })(Highcharts)
 
 
         window.onload = function () {
