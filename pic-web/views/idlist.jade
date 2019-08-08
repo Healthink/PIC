@@ -5,6 +5,7 @@ block content
     html(lang='zh-CN')
         head
             meta(charset='utf-8')
+            link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
 
     script(src='/javascripts/highcharts.js')
@@ -13,7 +14,12 @@ block content
     script(src='/javascripts/xrange.js')
     script(src='/javascripts/exporting.js')
     script(src='/javascripts/series-label.js')
+
+    link(rel='shortcut icon', href='http://static.tmimgcdn.com/img/favicon.ico')
+    link(rel='icon', href='http://static.tmimgcdn.com/img/favicon.ico')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
+
+
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
     script(src='/javascripts/jquery-1.11.0.min.js')
@@ -26,21 +32,27 @@ block content
     body
 
     div(style="width: 1000px; margin: 50px 200px;")
-        //basic information
         ul(id="header")
 
-
-    //vis timeline
     div(style="margin: 50px 200px;" id="chartdiv"  )
-
-    //lab//sign//medication
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;', id="labchart"  )
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart3")
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart4")
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart1" )
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart2")
 
+
     script(type='text/javascript').
+
+        function redirect_sign(a) {
+            window.open("/search/graph_sign?q=" + a);
+        }
+        function redirect_lab(a) {
+            window.open("/search/graph_lab?q=" + a);
+        }
+        function redirect_event(a) {
+            window.open("/search/graph_event?q=" + a);
+        }
 
 
         function search_id() {
@@ -49,7 +61,9 @@ block content
                 url: "/search/id/list",
                 type: "POST",
                 data: {term: Term},
+
                 success: function (data) {
+
                     if (data == '') {
                         alert("No corresponding data!");
                     } else {
@@ -81,9 +95,9 @@ block content
                 data: {term: Term},
 
                 success: function (data) {
-                    if (data[0] == '') {               
+                    if (data[0] == '') {
                     } else {
-                        //data0:admission,discharge,transfer;data1:surgery
+
                         if (typeof data[0][0].MONITOR_TIME == "undefined") {
                             var data0 = data[0]
                             var data1 = data[1]
@@ -91,6 +105,8 @@ block content
                             data1 = data[0]
                             data0 = data[1]
                         }
+
+
 
                         var admitFlag = 0;
                         var diachargeFlag = 0;
@@ -167,7 +183,7 @@ block content
                             if (transferFlag == 0) transfer.push(arr1);
                             transferFlag = 0;
 
-                            for (var r = 0; r < transfer.length; r++) { //排除icustayid不同，其他相同 --> 导致多余admit/discharge数据的情况
+                            for (var r = 0; r < transfer.length; r++) { 
                                 if (arr2.HADM_ID == transfer[r].HADM_ID && arr2.EVENTTYPE == transfer[r].EVENTTYPE && arr2.CURR_CAREUNIT == transfer[r].CURR_CAREUNIT && arr2.CURR_WARDID == transfer[r].CURR_WARDID && arr2.INTIME == transfer[r].INTIME && arr2.OUTTIME == transfer[r].OUTTIME) transferFlag = 1;
                             }
                             if (transferFlag == 0) transfer.push(arr2);
@@ -180,7 +196,6 @@ block content
                             transferFlag = 0;
                         }
 
-                        //patients with surgery records
                         if (data1 != '') {
                             var surgery = [{
                                 HADM_ID: data1[0].HADM_ID,
@@ -188,7 +203,7 @@ block content
                                 OPER_ID: data1[0].OPER_ID
                             }];
 
-                            for (var p = 0; p < data1.length; p++) {  //surgery单独列出
+                            for (var p = 0; p < data1.length; p++) {  
                                 for (var q = 0; q < surgery.length; q++) {
                                     if (data1[p].HADM_ID == surgery[q].HADM_ID && data1[p].MONITOR_TIME == surgery[q].MONITOR_TIME && data1[p].OPER_ID == surgery[q].OPER_ID) surgeryFlag = 1;
                                 }
@@ -216,6 +231,7 @@ block content
                                 }
                             }
                             surgery_e.push(surgery[surgery.length - 1].MONITOR_TIME);
+
                             for (var s = 0; s < operid.length; s++) {
                                 dataset.push({
                                     start: new Date(Number(chGMT(surgery_s[s]).slice(0, 4)), Number(chGMT(surgery_s[s]).slice(5, 7) - 1), Number(chGMT(surgery_s[s]).slice(8, 10)), Number(chGMT(surgery_s[s]).slice(11, 13)), Number(chGMT(surgery_s[s]).slice(14, 16)), Number(chGMT(surgery_s[s]).slice(17, 19))),
@@ -224,6 +240,7 @@ block content
                                     className: 'lightgreen',
                                     group: 2
                                 });
+
                             }
 
                             var groups = new vis.DataSet([
@@ -232,10 +249,10 @@ block content
                                 {id: 2, content: 'Surgery', value: 2},
                                 {id: 3, content: 'ICUSTAY<br>' + 'ID', value: 1},
                                 {id: 4, content: 'HADM<br>' + 'ID', value: 0}
+
                             ]);
                         }
 
-                        //patients without surgery records
                         else{
                             var groups = new vis.DataSet([
                                 {id: 0, content: 'Admission<br>&Discharge', value: 4},
@@ -244,10 +261,13 @@ block content
                                 {id: 4, content: 'HADM<br>' + 'ID', value: 0}
 
                             ]);
+
                         }
 
-                        for (var t = 0; t < transfer.length; t++) {//icu,含对应不同IN、OUTTIME的重复id项
- 
+
+
+                        for (var t = 0; t < transfer.length; t++) {
+
                             if (transfer[t].ICUSTAY_ID != null) {
                                 icu.push({
                                     INTIME: transfer[t].INTIME,
@@ -257,7 +277,8 @@ block content
                                 })
                             }
 
-                            if (transfer[t].EVENTTYPE == 'admit' || transfer[t].EVENTTYPE == 'discharge') {//admit discharge
+
+                            if (transfer[t].EVENTTYPE == 'admit' || transfer[t].EVENTTYPE == 'discharge') {
 
 
                                 if (transfer[t].EVENTTYPE == 'admit') {
@@ -274,6 +295,7 @@ block content
                                         OUTTIME: transfer[t].OUTTIME
                                     })
                                 }
+
                                 if (transfer[t].EVENTTYPE == 'transfer') {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
@@ -306,9 +328,7 @@ block content
 
                                 }
 
-                            } 
-                            //transfer
-                            else {  
+                            } else {
                                 if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID != null) {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
@@ -316,37 +336,38 @@ block content
                                         title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
                                         group: 1
                                     });
-                                } 
-                                else if (transfer[t].CURR_CAREUNIT == null && transfer[t].CURR_WARDID != null) {
+                                } else if (transfer[t].CURR_CAREUNIT == null && transfer[t].CURR_WARDID != null) {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
                                         content: 'Transfer to Ward ' + transfer[t].CURR_WARDID,
                                         title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
                                         group: 1
                                     });
-                                } 
-                                else if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID == null) {
+                                } else if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID == null) {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
                                         content: 'Transfer to Unit ' + transfer[t].CURR_CAREUNIT,
                                         title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
                                         group: 1
                                     });
-                                } 
-                                else {
+                                } else {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
                                         title: 'Time:' + Number(chGMT(transfer[t].INTIME).slice(0, 4)) + '.' + Number(chGMT(transfer[t].INTIME).slice(5, 7)) + '.' + Number(chGMT(transfer[t].INTIME).slice(8, 10)) + ' ' + chGMT(transfer[t].INTIME).slice(11, 13) + ':' + chGMT(transfer[t].INTIME).slice(14, 16) + ':' + chGMT(transfer[t].INTIME).slice(17, 19),
                                         group: 1
                                     });
                                 }
+
                             }
+
+
                         }
 
-
                         var icustayId = [icu[0].ICUSTAY_ID];
+
                         for (var u = 0; u < icu.length; u++) {
                             var icuflag = 0;
+                            //icuid 1,2,3
                             for (var v = 0; v < icustayId.length; v++) {
                                 if (icu[u].ICUSTAY_ID == icustayId[v]) {
                                     icuflag = 1
@@ -357,25 +378,30 @@ block content
                             }
                         }
 
+
                         for (var v = 0; v < icustayId.length; v++) {
                             var intime = [];
                             var outtime = [];
+
                             for (var u = 0; u < icu.length; u++) {
                                 if (icu[u].ICUSTAY_ID == icustayId[v]) {
                                     intime.push(icu[u].INTIME);
                                     outtime.push(icu[u].OUTTIME);
                                 }
                             }
+
                             icustay.push({
                                 INTIME: intime[0],
                                 OUTTIME: outtime[outtime.length - 1],
                                 ICUSTAY_ID: icustayId[v]
                             })
+
                         }
 
-                        //hospital admission & discharge background
-                        if (admit.length == discharge.length) {  //admission+discharge
+
+                        if (admit.length == discharge.length) {
                             for (var o = 0; o < admit.length; o++) {
+
                                 dataset.push(
                                     {
                                         start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
@@ -424,8 +450,9 @@ block content
                                 )
                             }
                         }
-                        
-                        if (admit.length - discharge.length == 1) {  //lack of last discharge record
+
+
+                        if (admit.length - discharge.length == 1) {
                             for (var o = 0; o < discharge.length; o++) {
                                 dataset.push(
                                     {
@@ -471,13 +498,15 @@ block content
                                         type: 'background',
                                         className: 'negative',
                                         group: 0
+
                                     }
                                 )
                             }
+
                         }
-                        
-                        //icustay background
-                        for (var o = 0; o < icustay.length; o++) { 
+
+
+                        for (var o = 0; o < icustay.length; o++) {
                             dataset.push(
                                 {
                                     start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
@@ -511,33 +540,43 @@ block content
                                     group: 0
                                 }
                             )
+
                         }
 
-                        // vis timeline
+
                         var chartdata = new vis.DataSet(dataset);
                         var options = {
                             editable: false,
+
                             groupOrder: function (a, b) {
                                 return a.value - b.value;
                             }
                         };
 
-                        //fit items button
+
                         var html0 = "<span>Supports zooming & moving with the mouse.Click to <input type='button' value='Fit all items' id='fit'></span><br><br>"
                         $("#chartdiv").append($(html0));
+
+
                         document.getElementById('fit').onclick = function () {
                             timeline.fit();
                         };
 
-                        // create the timeline
+
                         var container = document.getElementById('chartdiv');
                         var timeline = new vis.Timeline(container, chartdata, options, groups);
+
                     }
                 }
+
             })
+
         }
 
+
         function search_graph_lab(Term1) {
+        //var Term =
+        !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_lab/list",
                 type: "POST",
@@ -551,19 +590,25 @@ block content
                         var item = [];
                         var distinctItemId = [];
                         var distinctLabel = [];
+
                         var id = [];
                         var label = [];
                         var charttime = [];
                         var value = [];
                         var unit = [];
                         var flag = [];
+
+
                         var seriesArr = [];
 
                         for (var i = 0; i < data.length; i++) {
+
+
                             id.push(data[i].ITEM_ID);
                             label.push(data[i].LABEL);
                             charttime.push(data[i].CHARTTIME);
                             value.push(data[i].VALUE);
+
 
                             if (!item[data[i].ITEMID]) {
                                 distinctItemId.push(data[i].ITEMID);
@@ -574,10 +619,14 @@ block content
 
 
                         for (var j = 0; j < distinctItemId.length; j++) {
+
                             var labTestData = [];
                             var k = 0;
+
                             for (var r = 0; r < data.length; r++) {
+
                                 if (data[r].ITEMID == distinctItemId[j]) {
+
                                     labTestData[k] = {
                                         x: Date.UTC(chGMT(data[r].CHARTTIME).slice(0, 4), chGMT(data[r].CHARTTIME).slice(5, 7) - 1, chGMT(data[r].CHARTTIME).slice(8, 10), chGMT(data[r].CHARTTIME).slice(11, 13), chGMT(data[r].CHARTTIME).slice(14, 16), chGMT(data[r].CHARTTIME).slice(17, 19)),
                                         y: Number(data[r].VALUE),
@@ -592,7 +641,6 @@ block content
                                 seriesArr.push({
                                     name: distinctLabel[j],
                                     data: labTestData,
-                                    // unit:labTestData[0].data[0].unit,
                                     color: Highcharts.getOptions().colors[j],
                                     visible: true
                                 });
@@ -603,10 +651,14 @@ block content
                                     color: Highcharts.getOptions().colors[j],
                                     visible: false
                                 });
+
                             }
+
                         }
+
+
                         //////////// LAB TEST DATA ////////////
-                        //Synchronous zoom effect
+
                         function syncExtremes(e) {
                             var thisChart = this.chart;
                             if (e.trigger !== 'syncExtremes') {
@@ -628,12 +680,15 @@ block content
                                 panning: true,
                                 panKey: 'ctrl'
                             },
+
+
                             title: {
                                 text: 'LAB TEST-HADMID: ' + Term1
                             },
                             subtitle: {
                                 text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                             },
+
                             xAxis: {
                                 type: 'datetime',
                                 events: {
@@ -643,22 +698,26 @@ block content
                                     text: 'Time In Hospital'
                                 }
                             },
+
                             yAxis: [{
                                 title: {
                                     text: 'Value'
                                 },
                                 tickInterval: 1
+
                             }],
                             tooltip: {
                                 headerFormat: '<b>Item:{series.name}</b><br>',
                                 pointFormat: '<b>Result:</b>{point.y} {point.unit}<br><b>Flag:</b>{point.flag}<br>{point.x:%A,%b.%e,%Y,%H:%M:%S}',
                                 positioner: function () {
-                                    return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
-                                }, 
-                                crosshairs: [{
+                                    return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
+                                },
+
+                                crosshairs: [{            
                                     width: 1,
                                     color: "#006cee",
                                     dashStyle: 'longdashdot'
+
                                 }, {
                                     width: 1,
                                     color: "#006cee",
@@ -670,6 +729,7 @@ block content
                                 align: 'right',
                                 verticalAlign: 'middle'
                             },
+
                             plotOptions: {
                                 series: {
                                     label: {
@@ -682,23 +742,33 @@ block content
                                     }
                                 }
                             },
+
+
                             series: seriesArr
+
                         });
+
                     }
                 }
+
             })
         }
 
 
 
         function search_graph_sign(Term2) {
+            //var Term =
+            !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_sign/list",
                 type: "POST",
                 data: {term: Term2},
+
                 success: function (data) {
+
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+
                     } else {
                         var sign_time = [];
                         var sign_arr = [];
@@ -719,7 +789,10 @@ block content
                         var k70 = 0;
                         var k80 = 0;
 
+
                         //////////// VITAL SIGN DATA ////////////
+
+
                         sign_arr[0] = data[0];
                         sign_time[0] = sign_arr[0].CHARTTIME;
                         var s = 1;
@@ -730,9 +803,11 @@ block content
                                 s++;
                             }
                         }
+
+
                         for (var ks = 0; ks < s; ks++) {
                             if (sign_arr[ks].UrineOutput != null) {
-                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                sign_arr1[k10] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].UrineOutput)
                                 }
@@ -787,9 +862,12 @@ block content
                                 }
                                 k80++;
                             }
+
                         }
 
+
                         $(function () {
+                            
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -803,6 +881,7 @@ block content
                                 }
                             }
 
+
                             Highcharts.chart('timechart1', {
                                 chart: {
                                     type: 'spline',
@@ -810,6 +889,7 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
+
                                 },
                                 title: {
                                     text: 'VITAL SIGNS-ICUSTAYID: ' + Term2
@@ -823,9 +903,12 @@ block content
                                     events: {
                                         setExtremes: syncExtremes
                                     },
+
+
                                     title: {
                                         text: 'Time In ICU'
                                     }
+
                                 },
                                 yAxis: [{
                                     title: {
@@ -834,13 +917,15 @@ block content
                                     tickInterval: 1,
                                     min: 0
                                 }],
+
                                 tooltip: {
                                     headerFormat: '<b>{series.name}:{point.y}</b><br>',
                                     pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
                                     positioner: function () {
-                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    crosshairs: [{  
+                                   
+                                    crosshairs: [{           
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -851,11 +936,13 @@ block content
                                         dashStyle: 'longdashdot'
                                     }]
                                 },
+                               
                                 legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
                                 },
+
                                 plotOptions: {
                                     series: {
                                         label: {
@@ -868,8 +955,10 @@ block content
                                         }
                                     }
                                 },
+
                                 colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969', '#FF8C00'],
-                                series: [{
+                                series: [
+                                    {
                                     name: 'Urine Output',
                                     data: sign_arr1
                                 },
@@ -903,6 +992,7 @@ block content
                                     }
                                 ]
                             });
+
                         });
                     }
                 }
@@ -910,19 +1000,26 @@ block content
         }
 
 
+
         function search_graph_med(Term2) {
+            //var Term =
+            !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_med/list",
                 type: "POST",
                 data: {term: Term2},
+
                 success: function (data) {
+
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+
                     } else {
                         var drugcategory = [];
                         var drugresult = [];
                         var obj = {};
                         var arrData = [];
+
                         var starttime = [];
                         var endtime = [];
                         var strength = [];
@@ -930,9 +1027,15 @@ block content
                         var doseunit = [];
                         var dosechange = [];
 
+
+
                         ////////DRUG DATA/////////
+
+
                         var drug = [data[0]];
                         var drugflag = 0;
+
+
                         for (var w = 0; w < data.length; w++) {
                             for (var o = 0; o < drug.length; o++) {
                                 if (data[w].DRUG_NAME_EN == drug[o].DRUG_NAME_EN && data[w].STARTDATE == drug[o].STARTDATE && data[w].ENDDATE == drug[o].ENDDATE && data[w].PROD_STRENGTH == drug[o].PROD_STRENGTH && data[w].DOSE_VAL_RX == drug[o].DOSE_VAL_RX && data[w].DOSE_UNIT_RX == drug[o].DOSE_UNIT_RX) drugflag = 1;
@@ -941,7 +1044,9 @@ block content
                             drugflag = 0;
                         }
 
+
                         var c = 0;
+
                         for (var q = 0; q < drug.length; q++) {
                             drugcategory[c] = [drug[q].DRUG_NAME_EN];
                             starttime[c] = [drug[q].STARTDATE];
@@ -952,14 +1057,19 @@ block content
                             doseunit[c] = [drug[q].DOSE_UNIT_RX];
                             c++;
                         }
+
                         for (var i = 0; i < drug.length; i++) {
 
                             if (!obj[drugcategory[i]]) {
                                 drugresult.push(drugcategory[i]);
                                 obj[drugcategory[i]] = true;
                             }
+
                         }
                         drugresult.sort(); 
+
+
+
                         for (var t = 0; t < drugresult.length; t++) {
                             var samedrug = [];
                             var j = 0;
@@ -969,10 +1079,11 @@ block content
                                     j++;
                                 }
                             }
+
                             var value = [];
                             for (var j0 = 0; j0 < j; j0++) {
 
-                                //unification of units
+
                                 value[j0] = parseFloat(dosevalue[samedrug[j0]][0]);
                                 if (doseunit[samedrug[j0]][0] == "g") value[j0] = value[j0] * 1000000;
                                 else if (doseunit[samedrug[j0]][0] == "mg" || doseunit[samedrug[j0]][0] == "mg/ml" || doseunit[samedrug[j0]][0] == "mg/kg" || doseunit[samedrug[j0]][0] == "mg/hr") value[j0] = value[j0] * 1000;
@@ -988,13 +1099,19 @@ block content
                                     dosechange[samedrug[j0]] = "-";
                                 } else dosechange[samedrug[j0]] = "x";
                             }
+
+
                         }
 
+
                         for (var r = 0; r < c; r++) {
-                            if (starttime[r][0] == endtime[r][0]) {  //time point
+
+                            if (starttime[r][0] == endtime[r][0]) {
+
                                 var stp = starttime[r][0]
                                 var tp = new Date(stp)
-                                var edt = new Date(tp.setHours(tp.getHours() + 1)).format("yyyy-MM-dd hh:mm:ss");
+                                var edt = new Date(tp.setHours(tp.getHours() + 1)).format("yyyy-MM-dd hh:mm:ss"); 
+
                                 arrData[r] = {
                                     x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
                                     x2: Date.UTC(chGMT(edt).slice(0, 4), chGMT(edt).slice(5, 7) - 1, chGMT(edt).slice(8, 10), chGMT(edt).slice(11, 13), chGMT(edt).slice(14, 16), chGMT(edt).slice(17, 19)),
@@ -1005,7 +1122,8 @@ block content
                                     doseunit: doseunit[r][0],
                                     dosechange: dosechange[r]
                                 }
-                            } else { //time period
+                            } else {
+
                                 arrData[r] = {
                                     x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
                                     x2: Date.UTC(chGMT(endtime[r][0]).slice(0, 4), chGMT(endtime[r][0]).slice(5, 7) - 1, chGMT(endtime[r][0]).slice(8, 10), chGMT(endtime[r][0]).slice(11, 13), chGMT(endtime[r][0]).slice(14, 16), chGMT(endtime[r][0]).slice(17, 19)),
@@ -1015,11 +1133,14 @@ block content
                                     dosevalue: dosevalue[r][0],
                                     doseunit: doseunit[r][0],
                                     dosechange: dosechange[r]
+
                                 }
+
                             }
                         }
 
                         $(function () {
+
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -1032,7 +1153,8 @@ block content
                                     });
                                 }
                             }
-                   
+
+
                             Highcharts.chart('timechart2', {
                                 chart: {
                                     type: 'xrange',
@@ -1040,6 +1162,8 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
+
+
                                 },
                                 title: {
                                     text: 'MEDICATION-ICUSTAYID: ' + Term2
@@ -1047,6 +1171,8 @@ block content
                                 subtitle: {
                                     text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                                 },
+
+
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
@@ -1055,22 +1181,30 @@ block content
                                     title: {
                                         text: 'Medication Time'
                                     }
+
+
                                 },
+
                                 yAxis: [{
                                     title: {
                                         text: ''
                                     },
-                                    categories: drugresult,//y轴的值(药品名称需要查询)
-                                    reversed: true,//y轴值上下顺序反向
+                                    categories: drugresult,
+                                    reversed: true,
                                     tickInterval: 1
                                 }],
+
+
                                 tooltip: {
+
                                     headerFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S}-{point.x2:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Drug:</b>{point.drug}<br><b>Strength:</b>{point.strength}<br><b>Dosage:</b>{point.dosevalue}{point.doseunit} ',
-                                    positioner: function () {//固定标签显示位置
+                                    positioner: function () {
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    crosshairs: [{ 
+
+
+                                    crosshairs: [{            
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1082,11 +1216,16 @@ block content
                                     }]
 
                                 },
+
+
                                 legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
+
                                 },
+
+
                                 series: [{
                                     name: 'Drugs',
                                     dashStyle: 'solid',
@@ -1099,6 +1238,7 @@ block content
                                         align: 'center',
                                         format: '{point.dosechange}'
                                     }
+
                                 }]
                             });
                         });
@@ -1108,7 +1248,10 @@ block content
         }
 
 
+
         function search_graph_surgeryvital(Term30, Term31) {
+            //var Term =
+            !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_surgeryvital/list",
                 type: "POST",
@@ -1119,6 +1262,7 @@ block content
 
                 success: function (data) {
 
+
                     var obj = {};
                     var obj1 = {};
                     var obj2 = {};
@@ -1127,7 +1271,9 @@ block content
                     var obj5 = {};
                     var obj6 = {};
                     var arrData = [];
-                    var tl = 0;//tl=sign_time.length
+
+                    var tl = 0;
+
                     var sign_time = [];
                     var sign_arr = [];
                     var sign_arr1 = [];
@@ -1137,6 +1283,7 @@ block content
                     var sign_arr5 = [];
                     var sign_arr6 = [];
                     var sign_arr7 = [];
+
                     var k10 = 0;
                     var k20 = 0;
                     var k30 = 0;
@@ -1144,10 +1291,16 @@ block content
                     var k50 = 0;
                     var k60 = 0;
                     var k70 = 0;
+
+
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+
                     } else {
+                      
                         //////////// SURGERY VITAL SIGN DATA ////////////
+
+
                         sign_arr[0] = data[0];
                         sign_time[0] = sign_arr[0].MONITOR_TIME;
                         var s = 1;
@@ -1158,6 +1311,8 @@ block content
                                 s++;
                             }
                         }
+
+
                         for (var ks = 0; ks < s; ks++) {
                             if (sign_arr[ks].HeartRate != null) {
                                 sign_arr1[k10] = {
@@ -1208,7 +1363,10 @@ block content
                                 }
                                 k70++;
                             }
+
+
                         }
+
 
                         $(function () {
                             function syncExtremes(e) {
@@ -1231,6 +1389,7 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
+
                                 },
                                 title: {
                                     text: 'SURGERY VITAL SIGNS-HADMID: ' + Term30 + ' OPERID: ' + Term31
@@ -1241,27 +1400,29 @@ block content
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
-                                        setExtremes: syncExtremes //属性：该图zoom时其他图zoom (该chart不设，其他chart设置时，其他图zoom时改图也会zoom)
+                                        setExtremes: syncExtremes 
                                     },
                                     title: {
                                         text: 'Time In Hospital'
                                     }
+
                                 },
                                 yAxis: [{
                                     title: {
                                         text: 'Measurement, Absolute Value'
                                     },
-                                    //reversed: true,//y轴值上下顺序反向
                                     tickInterval: 1,
                                     min: 0
                                 }],
+
                                 tooltip: {
                                     headerFormat: '<b>{series.name}:{point.y}</b><br>',
                                     pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
                                     positioner: function () {
-                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    crosshairs: [{
+                                
+                                    crosshairs: [{           
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1272,11 +1433,14 @@ block content
                                         dashStyle: 'longdashdot'
                                     }]
                                 },
+                          
+
                                 legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
                                 },
+
                                 plotOptions: {
                                     series: {
                                         label: {
@@ -1289,6 +1453,7 @@ block content
                                         }
                                     }
                                 },
+
                                 colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969'],
                                 series: [{
                                     name: 'Heart Rate',
@@ -1320,6 +1485,7 @@ block content
                                     }
                                 ]
                             });
+
                         });
                     }
                 }
@@ -1327,12 +1493,15 @@ block content
         }
 
         function search_graph_emrsymptom(Term4) {
+        //var Term =
+        !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_emrsymptom/list",
                 type: "POST",
                 data: {term: Term4},
 
                 success: function (data) {
+
                     var symcategory = [];
                     var symcategory_p = [];
                     var symcategory_n = [];
@@ -1347,30 +1516,36 @@ block content
                     var attribute = [];
                     var attribute_p = [];
                     var attribute_n = [];
-                    
+
+
                     if (data == '') {
-                        alert("No or lack of relevant data!" + "\n" + "Click to close the message box."); 
+                        alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+
                     } else {
+                      
                         ////////EMR SYMPTOM DATA/////////
+
                         var c = 0;
+
                         for (var q = 0; q < data.length; q++) {
                             symcategory[c] = [data[q].SYMPTOM_NAME_EN];
                             starttime[c] = [data[q].RECORD_TIME];
                             attribute[c] = [data[q].SYMPTOM_ATTRIBUTE];
                             c++;
                         }
+
                         for (var i = 0; i < data.length; i++) {
                             if (!obj[symcategory[i]]) {
                                 symresult.push(symcategory[i]);
                                 obj[symcategory[i]] = true;
                             }
                         }
-                        symresult.sort(); //Display symptom names in alphabetical order from top to bottom
+                        symresult.sort(); 
 
                         var index_p = 0
                         var index_n = 0
                         for (var m = 0; m < c; m++) {
-                            if (attribute[m][0].indexOf('+') == 0) { 
+                            if (attribute[m][0].indexOf('+') == 0) {  
                                 symcategory_p[index_p] = symcategory[m];
                                 starttime_p[index_p] = starttime[m];
                                 attribute_p[index_p] = attribute[m];
@@ -1381,12 +1556,16 @@ block content
                                 attribute_n[index_n] = attribute[m];
                                 index_n++;
                             }
+
                         }
+
 
                         for (var r = 0; r < index_p; r++) {
                             for (var u = symcategory_p.length - 1; u >= 0; u--) {
                                 if (symcategory_p[r][0] == symcategory_p[u][0]) break;
                             }
+
+
                             arrData_p[r] = {
                                 x: Date.UTC(chGMT(starttime_p[r][0]).slice(0, 4), chGMT(starttime_p[r][0]).slice(5, 7) - 1, chGMT(starttime_p[r][0]).slice(8, 10), chGMT(starttime_p[r][0]).slice(11, 13), chGMT(starttime_p[r][0]).slice(14, 16), chGMT(starttime_p[r][0]).slice(17, 19)),
                                 x2: Date.UTC(chGMT(starttime_p[u][0]).slice(0, 4), chGMT(starttime_p[u][0]).slice(5, 7) - 1, chGMT(starttime_p[u][0]).slice(8, 10), chGMT(starttime_p[u][0]).slice(11, 13), chGMT(starttime_p[u][0]).slice(14, 16), chGMT(starttime_p[u][0]).slice(17, 19)),
@@ -1407,6 +1586,7 @@ block content
                                 sym: symcategory_n[r][0],
                                 attribute: attribute_n[r],
                                 color: '#b1a8ad'
+
                             }
                         }
 
@@ -1424,14 +1604,17 @@ block content
                                     });
                                 }
                             }
-
+                         
                             Highcharts.chart('timechart4', {
+
                                 chart: {
                                     type: 'xrange',
                                     marginLeft: 150,
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
+
+
                                 },
                                 title: {
                                     text: 'EMR SYMPTOM-HADMID: ' + Term4 + ' EMRID: ' + data[0].EMR_ID
@@ -1439,6 +1622,7 @@ block content
                                 subtitle: {
                                     text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                                 },
+
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
@@ -1447,7 +1631,10 @@ block content
                                     title: {
                                         text: 'Time In Hospital'
                                     }
+
+
                                 },
+
                                 yAxis: [{
                                     title: {
                                         text: ''
@@ -1457,13 +1644,16 @@ block content
                                     tickInterval: 1
                                 }],
 
+
                                 tooltip: {
+
                                     headerFormat: '<b>Record Time:</b>{point.x:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Symptom Name:</b>{point.sym}<br><b>Attribute:</b>{point.attribute}<br>',
-                                    positioner: function () {//固定标签显示位置
+                                    positioner: function () {
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    crosshairs: [{      
+                                   
+                                    crosshairs: [{            
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1475,24 +1665,30 @@ block content
                                     }]
 
                                 },
+
+
                                 legend: {
                                     layout: 'vertical',
                                     align: 'right',
-                                    verticalAlign: 'middle'
+                                    verticalAlign: 'middle',
 
                                 },
+
+
                                 series: [{
                                     name: 'Symptoms+',
                                     dashStyle: 'solid',
                                     pointWidth: 2,
                                     data: arrData_p,
-                                    color: '#ffc1c1',
+                                    color:'#ffc1c1',
                                     dataLabels: {
                                         enabled: true,
                                         defer: false,
                                         inside: true,
                                         align: 'center'
-                                    }
+                                    },
+
+
                                 },
                                     {
                                         name: 'Symptoms-',
@@ -1506,7 +1702,9 @@ block content
                                             inside: true,
                                             align: 'center'
                                         }
+
                                     }]
+
                             });
                         });
                     }
@@ -1514,33 +1712,6 @@ block content
             })
         }
 
-        (function (H) {
-            H.Legend.prototype.getAllItems = function () {
-                var allItems = [];
-                H.each(this.chart.series, function (series) {
-                    var seriesOptions = series && series.options;
-                    if (series.type === 'xrange') {
-                        series.color = series.userOptions.color
-                    }
-                    if (series && H.pick(
-                        seriesOptions.showInLegend,
-                        !H.defined(seriesOptions.linkedTo) ? undefined : false, true
-                    )) {
-                        allItems = allItems.concat(
-                            series.legendItems ||
-                            (
-                                seriesOptions.legendType === 'point' ?
-                                    series.data :
-                                    series
-                            )
-                        );
-                    }
-                });
-
-                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
-                return allItems;
-            }
-        })(Highcharts)
 
 
         Date.prototype.format = function (format) {
@@ -1562,6 +1733,7 @@ block content
         }
 
         function chGMT(gmtDate) {
+           
             return gmtDate;
         }
 
@@ -1587,9 +1759,48 @@ block content
             return true;
         }
 
+        
+        (function (H) {
+            H.Legend.prototype.getAllItems = function () {
+                var allItems = [];
+                len = this.chart.series.length;
+                H.each(this.chart.series, function (series) {
+                    if (series == undefined) ; 
+                    else {
+                        var seriesOptions = series && series.options;
+                        if (series.name === 'Symptoms+' || series.name === 'Symptoms-') {
+                            series.color = series.userOptions.color
+                        }
+                        if (series && H.pick(
+                            seriesOptions.showInLegend,
+                            !H.defined(seriesOptions.linkedTo) ? undefined : false, true
+                        )) {
+                            allItems = allItems.concat(
+                                series.legendItems ||
+                                (
+                                    seriesOptions.legendType === 'point' ?
+                                        series.data :
+                                        series
+                                )
+                            );
+                        }
+                    }
+
+                });
+
+                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
+                return allItems;
+            }
+        })(Highcharts)
+
+
+
 
         window.onload = function () {
+
+
             search_id();
+
         }
 
 
