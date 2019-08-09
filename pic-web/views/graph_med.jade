@@ -5,72 +5,48 @@ block content
 
     html(lang='en-US')
         head
-            //meta(charset='utf-8')
             meta(charset='utf-8')
+            link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
 
 
-    //script(src='/javascripts/jquery-1.8.3.min.js')
     script(src='/javascripts/jquery-1.11.0.min.js')
     script(src='/javascripts/highcharts.js')
     script(src='/javascripts/highcharts-more.js')
-    //script(src='https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js')
     script(src='/javascripts/xrange.js')
     script(src='/javascripts/exporting.js')
     script(src='/javascripts/series-label.js')
 
+
+    link(rel='shortcut icon', href='http://static.tmimgcdn.com/img/favicon.ico')
+    link(rel='icon', href='http://static.tmimgcdn.com/img/favicon.ico')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
-    //script(type='text/javascript', src='/javascripts/jquery-1.11.0.min.js')
+
 
     div(style="width: 1000px; margin: 50px 200px;")
-
         ul(id="position")
 
-
-
-
     body
-
-
-
-        //规定height可能导致div图表重叠
-        div(id="timechart1" style='min-width: 300px;max-width: 1500px;margin: 1em auto;')
         div(id="timechart2" style='min-width: 300px;max-width: 1500px;margin: 1em auto;')
-
-
-
-
-
-
-
-
 
 
 
     script(type='text/javascript').
         function search_graph_med(Term2) {
-            //var Term =
-            !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_med/list",
                 type: "POST",
                 data: {term: Term2},
-
                 success: function (data) {
-
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
-
                     } else {
-                        //alert("Success!");
                         var drugcategory = [];
                         var drugresult = [];
                         var obj = {};
                         var arrData = [];
-
                         var starttime = [];
                         var endtime = [];
                         var strength = [];
@@ -78,16 +54,9 @@ block content
                         var doseunit = [];
                         var dosechange = [];
 
-
                         ////////DRUG DATA/////////
-
-
                         var drug = [data[0]];
                         var drugflag = 0;
-
-
-                        //将不同charttime同样用药的记录删掉，得到不重复的用药记录
-
                         for (var w = 0; w < data.length; w++) {
                             for (var o = 0; o < drug.length; o++) {
                                 if (data[w].DRUG_NAME_EN == drug[o].DRUG_NAME_EN && data[w].STARTDATE == drug[o].STARTDATE && data[w].ENDDATE == drug[o].ENDDATE && data[w].PROD_STRENGTH == drug[o].PROD_STRENGTH && data[w].DOSE_VAL_RX == drug[o].DOSE_VAL_RX && data[w].DOSE_UNIT_RX == drug[o].DOSE_UNIT_RX) drugflag = 1;
@@ -96,9 +65,7 @@ block content
                             drugflag = 0;
                         }
 
-
                         var c = 0;
-
                         for (var q = 0; q < drug.length; q++) {
                             drugcategory[c] = [drug[q].DRUG_NAME_EN];
                             starttime[c] = [drug[q].STARTDATE];
@@ -109,43 +76,33 @@ block content
                             doseunit[c] = [drug[q].DOSE_UNIT_RX];
                             c++;
                         }
-
-                        //删除重复元素
                         for (var i = 0; i < drug.length; i++) {
 
                             if (!obj[drugcategory[i]]) {
-                                drugresult.push(drugcategory[i]);//drugresult存储不重复药品名
+                                drugresult.push(drugcategory[i]);
                                 obj[drugcategory[i]] = true;
                             }
-
                         }
-                        drugresult.sort(); //将药品显示按照自上至下的字母顺序重排
-
-
-                        //为了比较剂量大小，需要将原数组中每一种药组合在一起再比较
-
-                        for (var t = 0; t < drugresult.length; t++) {//遍历drugresult eg A B C D 0123
-                            var samedrug = [];//每一种新的药物设一个空白数组
+                        drugresult.sort();
+                        for (var t = 0; t < drugresult.length; t++) {
+                            var samedrug = [];
                             var j = 0;
-                            for (var u = 0; u < c; u++) {//遍历drugcategory eg A B A C D B A 0123456
+                            for (var u = 0; u < c; u++) {
                                 if (drugcategory[u][0] == drugresult[t][0]) {
                                     samedrug[j] = u;
-                                    j++;//将相同药物存进来 eg A 026
+                                    j++;
                                 }
                             }
-
                             var value = [];
                             for (var j0 = 0; j0 < j; j0++) {
 
-                                //单位换算:g,gm,mg,mg/ml,mg/kg,mg/hr,mg/min,mg/day,mg/24h,mg/kg/hr - mcg,mcg/ml,mcg/kg,mcg/h,mcg/kg/min
-
+                                //unification of units
                                 value[j0] = parseFloat(dosevalue[samedrug[j0]][0]);
                                 if (doseunit[samedrug[j0]][0] == "g") value[j0] = value[j0] * 1000000;
                                 else if (doseunit[samedrug[j0]][0] == "mg" || doseunit[samedrug[j0]][0] == "mg/ml" || doseunit[samedrug[j0]][0] == "mg/kg" || doseunit[samedrug[j0]][0] == "mg/hr") value[j0] = value[j0] * 1000;
                                 else if (doseunit[samedrug[j0]][0] == "mg/min" || doseunit[samedrug[j0]][0] == "mg/kg/hr") value[j0] = value[j0] * 1000 / 60;
                                 else if (doseunit[samedrug[j0]][0] == "mg/day" || doseunit[samedrug[j0]][0] == "mg/24h") value[j0] = value[j0] * 1000 / 24;
 
-                                //为dosechange赋值
                                 if (j0 == 0) dosechange[samedrug[j0]] = "I";
                                 else if (value[j0] > value[j0 - 1]) {
                                     dosechange[samedrug[j0]] = "↑";
@@ -155,21 +112,15 @@ block content
                                     dosechange[samedrug[j0]] = "-";
                                 } else dosechange[samedrug[j0]] = "x";
                             }
-
-
                         }
 
-
                         for (var r = 0; r < c; r++) {
-
-                            if (starttime[r][0] == endtime[r][0]) {//时间点给药，end=start+1h
-
+                            if (starttime[r][0] == endtime[r][0]) {  //time point
                                 var stp = starttime[r][0]
                                 var tp = new Date(stp)
-                                var edt = tp.setHours(tp.getHours() + 1)
+                                var edt = new Date(tp.setHours(tp.getHours() + 1)).format("yyyy-MM-dd hh:mm:ss");
                                 arrData[r] = {
                                     x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
-                                    // x2: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13) + 1, chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
                                     x2: Date.UTC(chGMT(edt).slice(0, 4), chGMT(edt).slice(5, 7) - 1, chGMT(edt).slice(8, 10), chGMT(edt).slice(11, 13), chGMT(edt).slice(14, 16), chGMT(edt).slice(17, 19)),
                                     y: in_array(drugcategory[r], drugresult),
                                     strength: strength[r][0],
@@ -178,8 +129,7 @@ block content
                                     doseunit: doseunit[r][0],
                                     dosechange: dosechange[r]
                                 }
-                            } else {
-
+                            } else { //time period
                                 arrData[r] = {
                                     x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
                                     x2: Date.UTC(chGMT(endtime[r][0]).slice(0, 4), chGMT(endtime[r][0]).slice(5, 7) - 1, chGMT(endtime[r][0]).slice(8, 10), chGMT(endtime[r][0]).slice(11, 13), chGMT(endtime[r][0]).slice(14, 16), chGMT(endtime[r][0]).slice(17, 19)),
@@ -189,22 +139,11 @@ block content
                                     dosevalue: dosevalue[r][0],
                                     doseunit: doseunit[r][0],
                                     dosechange: dosechange[r]
-
                                 }
-
                             }
                         }
 
-
-                        /*  本例子的目的是为了演示通过 Dom 事件、Highcharts 事件、Highcharts API 来讲一个页面中的多个图表进行联动的。
-                            本例通过循环创建类似的图表并绑定鼠标的滑动事件来对多个图表进行演示联动效果。*/
-
-
                         $(function () {
-
-                            /**
-                             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
-                             */
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -218,8 +157,6 @@ block content
                                 }
                             }
 
-
-                            //用药情况
                             Highcharts.chart('timechart2', {
                                 chart: {
                                     type: 'xrange',
@@ -227,8 +164,6 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
-
-
                                 },
                                 title: {
                                     text: 'MEDICATION-ICUSTAYID: ' + Term2
@@ -236,8 +171,6 @@ block content
                                 subtitle: {
                                     text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                                 },
-
-
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
@@ -246,10 +179,7 @@ block content
                                     title: {
                                         text: 'Medication Time'
                                     }
-
-
                                 },
-
                                 yAxis: [{
                                     title: {
                                         text: ''
@@ -258,21 +188,13 @@ block content
                                     reversed: true,//y轴值上下顺序反向
                                     tickInterval: 1
                                 }],
-
-
-                                tooltip: {//label样式
-
+                                tooltip: {
                                     headerFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S}-{point.x2:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Drug:</b>{point.drug}<br><b>Strength:</b>{point.strength}<br><b>Dosage:</b>{point.dosevalue}{point.doseunit} ',
                                     positioner: function () {//固定标签显示位置
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
-
-                                    crosshairs: [{            // 设置准星线样式
+                                    crosshairs: [{
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -284,20 +206,14 @@ block content
                                     }]
 
                                 },
-
-
-                                legend: {//图例右侧显示
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
-
                                 },
-
-
                                 series: [{
                                     name: 'Drugs',
                                     dashStyle: 'solid',
-                                    //borderColor: 'gray',
                                     pointWidth: 5,
                                     data: arrData,
                                     dataLabels: {
@@ -307,7 +223,6 @@ block content
                                         align: 'center',
                                         format: '{point.dosechange}'
                                     }
-
                                 }]
                             });
                         });
@@ -327,41 +242,25 @@ block content
                    "h+": this.getHours(), //hour
                    "m+": this.getMinutes(), //minute
                    "s+": this.getSeconds(), //second
-                   "q+": Math.floor((this.getMonth() + 3) / 3), //
+                   "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
                    "S": this.getMilliseconds() //millisecond
                }
 
            }
 
            function chGMT(gmtDate) {
-               var mydate = new Date(gmtDate);
-               mydate.setHours(mydate.getHours());
-               return mydate.format("yyyy-MM-dd hh:mm:ss");
+               return gmtDate;
            }
 
            function in_array(searchString, array) {
                for (var i = 0; i < array.length; i++) {
                    if (searchString == array[i][0]) return i;
                }
-               //return false;
            }
 
 
-
-
-
-
-
-
-
-
-
         window.onload = function () {
-
-
             search_graph_med();
-
-
         }
 
 
