@@ -1,0 +1,32 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 120.55.170.231
+ Source Server Type    : MySQL
+ Source Server Version : 50554
+ Source Host           : 120.55.170.231:3306
+ Source Schema         : pMIMIC_NEW
+
+ Target Server Type    : MySQL
+ Target Server Version : 50554
+ File Encoding         : 65001
+
+ Date: 29/07/2019 10:51:36
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for D_ICD_DIAGNOSES
+-- ----------------------------
+DROP TABLE IF EXISTS `D_ICD_DIAGNOSES`;
+CREATE TABLE `D_ICD_DIAGNOSES`  (
+  `ROW_ID` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ICD10_CODE_CN` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ICD10_CODE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `TITLE_CN` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `TITLE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;
