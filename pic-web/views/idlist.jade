@@ -5,6 +5,7 @@ block content
     html(lang='zh-CN')
         head
             meta(charset='utf-8')
+            link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
 
     script(src='/javascripts/highcharts.js')
@@ -13,7 +14,12 @@ block content
     script(src='/javascripts/xrange.js')
     script(src='/javascripts/exporting.js')
     script(src='/javascripts/series-label.js')
+
+    link(rel='shortcut icon', href='http://static.tmimgcdn.com/img/favicon.ico')
+    link(rel='icon', href='http://static.tmimgcdn.com/img/favicon.ico')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap.min.css')
+
+
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/bootstrap-glyphicons.css')
     link(rel='stylesheet', type='text/css', media='all', href='/stylesheets/styles.css')
     script(src='/javascripts/jquery-1.11.0.min.js')
@@ -26,24 +32,14 @@ block content
     body
 
     div(style="width: 1000px; margin: 50px 200px;")
-        //info
         ul(id="header")
 
-
-    //vis timeline
     div(style="margin: 50px 200px;" id="chartdiv"  )
-
-    //lab//sign//medication
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;', id="labchart"  )
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart3")
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart4")
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart1" )
     div(style='min-width: 300px;max-width: 1500px;margin: 1em auto;' , id="timechart2")
-
-
-    //div(style="width: 1000px; margin: 50px 200px;")
-    //    ul(id="position")
-
 
 
     script(type='text/javascript').
@@ -71,7 +67,6 @@ block content
                     if (data == '') {
                         alert("No corresponding data!");
                     } else {
-                        //alert("success");
                         {
                             var html = "<li><div>";
                             html += "<p><span style='color:#14334b;font-size:20px'><strong>Subject ID: </strong>" + data[0].SUBJECT_ID + "</span></p>";
@@ -81,8 +76,6 @@ block content
                                 html += "<p><span style='color:#14334b;font-size:15px'><strong>Confirmed Dead In Hospital: </strong>"+data[0].DOD+"</span></p>";
                             else
                                 html += "<p><span style='color:#14334b;font-size:15px'><strong><I>Not Confirmed Dead In Hospital</I></strong></span></p>";
-
-                            // html += "<p><button onclick='redirect_event(" + data[0].subject_id + ")'>events</button></p>";
                             html += "</div></li>";
 
                         }
@@ -103,12 +96,8 @@ block content
 
                 success: function (data) {
                     if (data[0] == '') {
-                        // alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
                     } else {
 
-                        //alert("success");
-
-                        //判断异步查询的结果，将admission,discharge,transfer设为data0；将surgery设为data1
                         if (typeof data[0][0].MONITOR_TIME == "undefined") {
                             var data0 = data[0]
                             var data1 = data[1]
@@ -189,13 +178,12 @@ block content
 
                             for (var r = 0; r < transfer.length; r++) {
                                 if (isObjEqual(arr1, transfer[r])) transferFlag = 1;
-                                // if (jQuery.inArray(arr1,transfer)!==-1) transferFlag=1;
                             }
 
                             if (transferFlag == 0) transfer.push(arr1);
                             transferFlag = 0;
 
-                            for (var r = 0; r < transfer.length; r++) { //排除icustayid不同，其他相同 --> 导致多余admit/discharge数据的情况
+                            for (var r = 0; r < transfer.length; r++) { 
                                 if (arr2.HADM_ID == transfer[r].HADM_ID && arr2.EVENTTYPE == transfer[r].EVENTTYPE && arr2.CURR_CAREUNIT == transfer[r].CURR_CAREUNIT && arr2.CURR_WARDID == transfer[r].CURR_WARDID && arr2.INTIME == transfer[r].INTIME && arr2.OUTTIME == transfer[r].OUTTIME) transferFlag = 1;
                             }
                             if (transferFlag == 0) transfer.push(arr2);
@@ -208,7 +196,6 @@ block content
                             transferFlag = 0;
                         }
 
-                        //有surgery记录
                         if (data1 != '') {
                             var surgery = [{
                                 HADM_ID: data1[0].HADM_ID,
@@ -216,7 +203,7 @@ block content
                                 OPER_ID: data1[0].OPER_ID
                             }];
 
-                            for (var p = 0; p < data1.length; p++) {  //surgery单独列出
+                            for (var p = 0; p < data1.length; p++) {  
                                 for (var q = 0; q < surgery.length; q++) {
                                     if (data1[p].HADM_ID == surgery[q].HADM_ID && data1[p].MONITOR_TIME == surgery[q].MONITOR_TIME && data1[p].OPER_ID == surgery[q].OPER_ID) surgeryFlag = 1;
                                 }
@@ -227,8 +214,7 @@ block content
                                 });
                                 surgeryFlag = 0;
                             }
-                        //distinct operation id
-                        //只保留起始和结束的时间点
+
                             var hadmid = [data1[0].HADM_ID]
                             var operid = [data1[0].OPER_ID];
                             var surgery_s = [data1[0].MONITOR_TIME];
@@ -249,7 +235,6 @@ block content
                             for (var s = 0; s < operid.length; s++) {
                                 dataset.push({
                                     start: new Date(Number(chGMT(surgery_s[s]).slice(0, 4)), Number(chGMT(surgery_s[s]).slice(5, 7) - 1), Number(chGMT(surgery_s[s]).slice(8, 10)), Number(chGMT(surgery_s[s]).slice(11, 13)), Number(chGMT(surgery_s[s]).slice(14, 16)), Number(chGMT(surgery_s[s]).slice(17, 19))),
-                                    //e.g. 'start': new Date(2012,7,29),调整GMT时间
                                     content: 'Operation_id=' + operid[s] + '<br><button onclick="search_graph_surgeryvital(' + hadmid[s] + ',' + operid[s] + ')">surgery vitals</button>',
                                     title: 'Duration: From' + Number(chGMT(surgery_s[s]).slice(0, 4)) + '.' + Number(chGMT(surgery_s[s]).slice(5, 7)) + '.' + Number(chGMT(surgery_s[s]).slice(8, 10)) + ' ' + chGMT(surgery_s[s]).slice(11, 13) + ':' + chGMT(surgery_s[s]).slice(14, 16) + ':' + chGMT(surgery_s[s]).slice(17, 19) + ' To ' + Number(chGMT(surgery_e[s]).slice(0, 4)) + '.' + Number(chGMT(surgery_e[s]).slice(5, 7)) + '.' + Number(chGMT(surgery_e[s]).slice(8, 10)) + ' ' + chGMT(surgery_e[s]).slice(11, 13) + ':' + chGMT(surgery_e[s]).slice(14, 16) + ':' + chGMT(surgery_e[s]).slice(17, 19),
                                     className: 'lightgreen',
@@ -268,12 +253,10 @@ block content
                             ]);
                         }
 
-                        //无surgery记录
                         else{
                             var groups = new vis.DataSet([
                                 {id: 0, content: 'Admission<br>&Discharge', value: 4},
                                 {id: 1, content: 'Transfers', value: 3},
-                                // {id: 2, content: 'Surgery', value: 2},
                                 {id: 3, content: 'ICUSTAY<br>' + 'ID', value: 1},
                                 {id: 4, content: 'HADM<br>' + 'ID', value: 0}
 
@@ -282,27 +265,8 @@ block content
                         }
 
 
-                        // for (var s = 0; s < surgery_e.length; s++) {
-                        //     dataset.push({
-                        //         start: new Date(Number(chGMT(surgery_e[s]).slice(0, 4)), Number(chGMT(surgery_e[s]).slice(5, 7) - 1), Number(chGMT(surgery_e[s]).slice(8, 10)), Number(chGMT(surgery_e[s]).slice(11, 13)), Number(chGMT(surgery_e[s]).slice(14, 16)), Number(chGMT(surgery_e[s]).slice(17, 19))),
-                        //         //e.g. 'start': new Date(2012,7,29),调整GMT时间
-                        //         content: 'Finished:operation_id=' + operid[s],
-                        //         title: 'Time:' + Number(chGMT(surgery_e[s]).slice(0, 4)) + '.' + Number(chGMT(surgery_e[s]).slice(5, 7)) + '.' + Number(chGMT(surgery_e[s]).slice(8, 10)) + ' ' + chGMT(surgery_e[s]).slice(11, 13) + ':' + chGMT(surgery_e[s]).slice(14, 16) + ':' + chGMT(surgery_e[s]).slice(17, 19),
-                        //         className: 'lightgreen',
-                        //         group: 2
-                        //     });
-                        //
-                        // }
 
-
-                        for (var t = 0; t < transfer.length; t++) {//icu,含对应不同IN、OUTTIME的重复id项
-                            //eg
-                            //    Id     In              Out
-                            //    1     2001.01.01    2001.01.13
-                            //    2     2002.08.04    2002.08.12
-                            //    2     2002.08.12    2002.08.15
-                            //    3     1998.11.06    1998.12.07
-
+                        for (var t = 0; t < transfer.length; t++) {
 
                             if (transfer[t].ICUSTAY_ID != null) {
                                 icu.push({
@@ -314,17 +278,17 @@ block content
                             }
 
 
-                            if (transfer[t].EVENTTYPE == 'admit' || transfer[t].EVENTTYPE == 'discharge') {//admit discharge
+                            if (transfer[t].EVENTTYPE == 'admit' || transfer[t].EVENTTYPE == 'discharge') {
 
 
-                                if (transfer[t].EVENTTYPE == 'admit') {//作为每次入院进程的background标注
+                                if (transfer[t].EVENTTYPE == 'admit') {
                                     admit.push({
                                         HADM_ID: transfer[t].HADM_ID,
                                         EVENTTYPE: transfer[t].EVENTTYPE,
                                         INTIME: transfer[t].INTIME
                                     })
                                 }
-                                if (transfer[t].EVENTTYPE == 'discharge') {//作为每次出院进程的background标注
+                                if (transfer[t].EVENTTYPE == 'discharge') {
                                     discharge.push({
                                         HADM_ID: transfer[t].HADM_ID,
                                         EVENTTYPE: transfer[t].EVENTTYPE,
@@ -332,7 +296,6 @@ block content
                                     })
                                 }
 
-                                //由于unit和ward有null的情况 所以要分条件push
                                 if (transfer[t].EVENTTYPE == 'transfer') {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
@@ -353,7 +316,7 @@ block content
                                     });
                                 }
                                 if (transfer[t].EVENTTYPE == 'discharge') {
-                                    if ((transfer[t].OUTTIME) != null) { //存在DISCHTIME为空的情况
+                                    if ((transfer[t].OUTTIME) != null) { 
                                         dataset.push({
                                             start: new Date(Number(chGMT(transfer[t].OUTTIME).slice(0, 4)), Number(chGMT(transfer[t].OUTTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].OUTTIME).slice(8, 10)), Number(chGMT(transfer[t].OUTTIME).slice(11, 13)), Number(chGMT(transfer[t].OUTTIME).slice(14, 16)), Number(chGMT(transfer[t].OUTTIME).slice(17, 19))),
                                             content: transfer[t].EVENTTYPE + '<br>from Unit ' + transfer[t].CURR_CAREUNIT,
@@ -365,8 +328,7 @@ block content
 
                                 }
 
-                            } else {//transfer
-                                //同样需要unit和ward是否为null的判定
+                            } else {
                                 if (transfer[t].CURR_CAREUNIT != null && transfer[t].CURR_WARDID != null) {
                                     dataset.push({
                                         start: new Date(Number(chGMT(transfer[t].INTIME).slice(0, 4)), Number(chGMT(transfer[t].INTIME).slice(5, 7) - 1), Number(chGMT(transfer[t].INTIME).slice(8, 10)), Number(chGMT(transfer[t].INTIME).slice(11, 13)), Number(chGMT(transfer[t].INTIME).slice(14, 16)), Number(chGMT(transfer[t].INTIME).slice(17, 19))),
@@ -401,15 +363,6 @@ block content
 
                         }
 
-
-                        //icu
-                        //    Id     In              Out
-                        //    1     2001.01.01    2001.01.13
-                        //    2     2002.08.04    2002.08.12
-                        //    2     2002.08.12    2002.08.15
-                        //    3     1998.11.06    1998.12.07
-
-
                         var icustayId = [icu[0].ICUSTAY_ID];
 
                         for (var u = 0; u < icu.length; u++) {
@@ -429,10 +382,7 @@ block content
                         for (var v = 0; v < icustayId.length; v++) {
                             var intime = [];
                             var outtime = [];
-                            //搜索每个icuid对应的in和out序列 eg for id=2:
-                            //          intime         outtime
-                            //         2002.08.04    2002.08.12
-                            //         2002.08.12    2002.08.15
+
                             for (var u = 0; u < icu.length; u++) {
                                 if (icu[u].ICUSTAY_ID == icustayId[v]) {
                                     intime.push(icu[u].INTIME);
@@ -449,14 +399,13 @@ block content
                         }
 
 
-                        if (admit.length == discharge.length) {//完整入院+出院，background group=0+1+2+3+4
+                        if (admit.length == discharge.length) {
                             for (var o = 0; o < admit.length; o++) {
 
                                 dataset.push(
                                     {
                                         start: new Date(Number(chGMT(admit[o].INTIME).slice(0, 4)), Number(chGMT(admit[o].INTIME).slice(5, 7) - 1), Number(chGMT(admit[o].INTIME).slice(8, 10)), Number(chGMT(admit[o].INTIME).slice(11, 13)), Number(chGMT(admit[o].INTIME).slice(14, 16)), Number(chGMT(admit[o].INTIME).slice(17, 19))),
                                         end: new Date(Number(chGMT(discharge[o].OUTTIME).slice(0, 4)), Number(chGMT(discharge[o].OUTTIME).slice(5, 7) - 1), Number(chGMT(discharge[o].OUTTIME).slice(8, 10)), Number(chGMT(discharge[o].OUTTIME).slice(11, 13)), Number(chGMT(discharge[o].OUTTIME).slice(14, 16)), Number(chGMT(discharge[o].OUTTIME).slice(17, 19))),
-                                        //content: '<br><a href="/search/graph_lab?q='+admit[o].HADM_ID+'" target="_blank">'+'HADM ID: '+admit[o].HADM_ID+'</a>'
                                         content: 'HADM ID: ' + admit[o].HADM_ID + '<br><button onclick= "search_graph_lab(' + admit[o].HADM_ID + '); ">' + 'lab test' + '</button><button onclick= search_graph_emrsymptom(' + admit[o].HADM_ID + ')>' + 'emr symptoms' + '</button>',
                                         type: 'background',
                                         className: 'negative',
@@ -503,7 +452,7 @@ block content
                         }
 
 
-                        if (admit.length - discharge.length == 1) {//最后一次入院未出院,background
+                        if (admit.length - discharge.length == 1) {
                             for (var o = 0; o < discharge.length; o++) {
                                 dataset.push(
                                     {
@@ -557,7 +506,7 @@ block content
                         }
 
 
-                        for (var o = 0; o < icustay.length; o++) {//icustay,background,考虑覆盖所以放在hadm下面
+                        for (var o = 0; o < icustay.length; o++) {
                             dataset.push(
                                 {
                                     start: new Date(Number(chGMT(icustay[o].INTIME).slice(0, 4)), Number(chGMT(icustay[o].INTIME).slice(5, 7) - 1), Number(chGMT(icustay[o].INTIME).slice(8, 10)), Number(chGMT(icustay[o].INTIME).slice(11, 13)), Number(chGMT(icustay[o].INTIME).slice(14, 16)), Number(chGMT(icustay[o].INTIME).slice(17, 19))),
@@ -596,25 +545,17 @@ block content
 
 
                         var chartdata = new vis.DataSet(dataset);
-                        // specify options
                         var options = {
                             editable: false,
-                            // zoomKey: 'ctrlKey',
-                            // option groupOrder can be a property name or a sort function
-                            // the sort function must compare two groups and return a value
-                            //     > 0 when a > b
-                            //     < 0 when a < b
-                            //       0 when a == b
+
                             groupOrder: function (a, b) {
                                 return a.value - b.value;
                             }
-
-
                         };
 
 
                         var html0 = "<span>Supports zooming & moving with the mouse.Click to <input type='button' value='Fit all items' id='fit'></span><br><br>"
-                        $("#chartdiv").append($(html0));// //fit items button
+                        $("#chartdiv").append($(html0));
 
 
                         document.getElementById('fit').onclick = function () {
@@ -622,37 +563,15 @@ block content
                         };
 
 
-                        // create the timeline
-
-                        //Method 1:
-                        // var container = document.getElementById('chartdiv');
-                        // var timeline = new vis.Timeline(container);
-                        // timeline.setOptions(options);
-                        // timeline.setGroups(groups);
-                        // timeline.setItems(chartdata);
-
-                        //Method 2:
                         var container = document.getElementById('chartdiv');
                         var timeline = new vis.Timeline(container, chartdata, options, groups);
-
 
                     }
                 }
 
             })
 
-
         }
-
-        // function mutebutton_lab1() {
-        //     $("#button_lab1").attr("disabled", true);
-        //     $("#button_lab2").attr("disabled", false);
-        // }
-        //
-        // function mutebutton_lab2() {
-        //     $("#button_lab2").attr("disabled", true);
-        //     $("#button_lab1").attr("disabled", false);
-        // }
 
 
         function search_graph_lab(Term1) {
@@ -668,9 +587,6 @@ block content
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
                     } else {
-                        //alert("success");
-
-
                         var item = [];
                         var distinctItemId = [];
                         var distinctLabel = [];
@@ -685,7 +601,7 @@ block content
 
                         var seriesArr = [];
 
-                        for (var i = 0; i < data.length; i++) {//distinct itemid
+                        for (var i = 0; i < data.length; i++) {
 
 
                             id.push(data[i].ITEM_ID);
@@ -705,11 +621,11 @@ block content
                         for (var j = 0; j < distinctItemId.length; j++) {
 
                             var labTestData = [];
-                            var k = 0;//清空
+                            var k = 0;
 
                             for (var r = 0; r < data.length; r++) {
 
-                                if (data[r].ITEMID == distinctItemId[j]) {//r=0：所有item0的数据循环存储
+                                if (data[r].ITEMID == distinctItemId[j]) {
 
                                     labTestData[k] = {
                                         x: Date.UTC(chGMT(data[r].CHARTTIME).slice(0, 4), chGMT(data[r].CHARTTIME).slice(5, 7) - 1, chGMT(data[r].CHARTTIME).slice(8, 10), chGMT(data[r].CHARTTIME).slice(11, 13), chGMT(data[r].CHARTTIME).slice(14, 16), chGMT(data[r].CHARTTIME).slice(17, 19)),
@@ -721,11 +637,10 @@ block content
                                 }
                             }
 
-                            if (j < 10) {//区分是否默认可见
-                                seriesArr.push({//存储完毕push到series，item0完毕
+                            if (j < 10) {
+                                seriesArr.push({
                                     name: distinctLabel[j],
                                     data: labTestData,
-                                    // unit:labTestData[0].data[0].unit,
                                     color: Highcharts.getOptions().colors[j],
                                     visible: true
                                 });
@@ -739,13 +654,11 @@ block content
 
                             }
 
-
                         }
 
 
                         //////////// LAB TEST DATA ////////////
 
-                        //同步缩放效果
                         function syncExtremes(e) {
                             var thisChart = this.chart;
                             if (e.trigger !== 'syncExtremes') {
@@ -793,17 +706,14 @@ block content
                                 tickInterval: 1
 
                             }],
-                            tooltip: {//label样式
+                            tooltip: {
                                 headerFormat: '<b>Item:{series.name}</b><br>',
                                 pointFormat: '<b>Result:</b>{point.y} {point.unit}<br><b>Flag:</b>{point.flag}<br>{point.x:%A,%b.%e,%Y,%H:%M:%S}',
-                                positioner: function () {//固定标签显示位置
-                                    return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                positioner: function () {
+                                    return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                 },
-                                // shadow: false,
-                                // shape: 'round',
-                                // borderWidth: 0,
-                                // backgroundColor: 'rgba(0,0,0,0.2)',
-                                crosshairs: [{            // 设置准星线样式
+
+                                crosshairs: [{            
                                     width: 1,
                                     color: "#006cee",
                                     dashStyle: 'longdashdot'
@@ -814,19 +724,19 @@ block content
                                     dashStyle: 'longdashdot'
                                 }]
                             },
-                            legend: {//图例右侧显示
+                            legend: {
                                 layout: 'vertical',
                                 align: 'right',
                                 verticalAlign: 'middle'
                             },
 
-                            plotOptions: {//line的图例标线
+                            plotOptions: {
                                 series: {
                                     label: {
                                         connectorAllowed: false
                                     }
                                 },
-                                spline: {//标志点
+                                spline: {
                                     marker: {
                                         enabled: true
                                     }
@@ -836,9 +746,7 @@ block content
 
                             series: seriesArr
 
-
                         });
-
 
                     }
                 }
@@ -860,12 +768,9 @@ block content
 
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
 
                     } else {
-                        //alert("Success!");
-
-                        var sign_time = [];//体征记录时间，横轴
+                        var sign_time = [];
                         var sign_arr = [];
                         var sign_arr1 = [];
                         var sign_arr2 = [];
@@ -888,10 +793,10 @@ block content
                         //////////// VITAL SIGN DATA ////////////
 
 
-                        sign_arr[0] = data[0];//把重复的数据去掉,sign_arr包含全部charttime的所有数据
+                        sign_arr[0] = data[0];
                         sign_time[0] = sign_arr[0].CHARTTIME;
-                        var s = 1;//注意s是从1开始的，p也是从1开始的
-                        for (var p = 1; p < data.length; p++) {//循环将所有记录的时间加入数组，确定横轴
+                        var s = 1;
+                        for (var p = 1; p < data.length; p++) {
                             if (data[p].CHARTTIME != data[p - 1].CHARTTIME) {
                                 sign_arr[s] = data[p];
                                 sign_time[s] = sign_arr[s].CHARTTIME;
@@ -900,9 +805,9 @@ block content
                         }
 
 
-                        for (var ks = 0; ks < s; ks++) {//signarr1-signarr6代表六种体征检测值
+                        for (var ks = 0; ks < s; ks++) {
                             if (sign_arr[ks].UrineOutput != null) {
-                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                sign_arr1[k10] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].UrineOutput)
                                 }
@@ -958,52 +863,11 @@ block content
                                 k80++;
                             }
 
-
-
                         }
 
 
-                        /*  本例子的目的是为了演示通过 Dom 事件、Highcharts 事件、Highcharts API 来讲一个页面中的多个图表进行联动的。
-                            本例通过循环创建类似的图表并绑定鼠标的滑动事件来对多个图表进行演示联动效果。*/
-
-
                         $(function () {
-                            // /**
-                            //  * 为了让多个图表的提示框即十字准星线能够联动，这里绑定多个图表的附件 dom 的鼠标事件进行联动
-                            //  */
-                            // $('#timechart1').bind('mousemove touchmove touchstart', function (e) {
-                            //     var chart,
-                            //         point,
-                            //         i,
-                            //         event;
-                            //     for (i = 0; i < Highcharts.charts.length; i = i + 1) {
-                            //         chart = Highcharts.charts[i];
-                            //         event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
-                            //         point = chart.series[0].searchPoint(event, true); // Get the hovered point
-                            //         if (point) {
-                            //             point.highlight(e);
-                            //         }
-                            //     }
-                            // });
-
-                            // /**
-                            //  * 重写内部的方法， 这里是将提示框即十字准星的隐藏函数关闭
-                            //  */
-                            // Highcharts.Pointer.prototype.reset = function () {
-                            //     return undefined;
-                            // };
-                            // /**
-                            //  * 高亮当前的数据点，并设置鼠标滑动状态及绘制十字准星线
-                            //  */
-                            // Highcharts.Point.prototype.highlight = function (event) {
-                            //     this.onMouseOver(); // 显示鼠标激活标识
-                            //     this.series.chart.tooltip.refresh(this); // 显示提示框
-                            //     this.series.chart.xAxis[0].drawCrosshair(event, this); // 显示十字准星线
-                            // };
-
-                            /**
-                             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
-                             */
+                            
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -1018,7 +882,6 @@ block content
                             }
 
 
-                            //体征变化
                             Highcharts.chart('timechart1', {
                                 chart: {
                                     type: 'spline',
@@ -1051,22 +914,18 @@ block content
                                     title: {
                                         text: 'Measurement, Absolute Value'
                                     },
-                                    //reversed: true,//y轴值上下顺序反向
                                     tickInterval: 1,
                                     min: 0
                                 }],
 
-                                tooltip: {//label样式
+                                tooltip: {
                                     headerFormat: '<b>{series.name}:{point.y}</b><br>',
                                     pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
-                                    positioner: function () {//固定标签显示位置
-                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                    positioner: function () {
+                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
-                                    crosshairs: [{            // 设置准星线样式
+                                   
+                                    crosshairs: [{           
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1077,36 +936,20 @@ block content
                                         dashStyle: 'longdashdot'
                                     }]
                                 },
-                                //     % a:星期的缩写, 比如'Mon'.
-                                //     % A:星期的全写, 比如'Monday'.
-                                //     % d:日期的写法, 比如：01到31.
-                                //     % e:日期的写法, 1到31.
-                                //     % b:月的缩写, 比如'Jan'.
-                                //     % B:月的全写, 比如'January'.
-                                //     % m:阿拉伯月的写法, 0112.
-                                //     % y:年的缩写, 比如09代表2009.
-                                //     % Y:年的全写, 比如2009.
-                                //     % H:两位数的24小时写法, 比如00到23.
-                                //     % I:两位数的12小时写法, 00到11.
-                                //     % l(L字母的小写):12小时的写法, 1到11.
-                                //     % M:分钟写法, 00到59.
-                                //     % p:Upper case AM or PM.
-                                //     % P:Lower case AM or PM.
-                                //     % S:分钟写法, 00到59
-
-                                legend: {//图例右侧显示
+                               
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
                                 },
 
-                                plotOptions: {//line的图例标线
+                                plotOptions: {
                                     series: {
                                         label: {
                                             connectorAllowed: false
                                         }
                                     },
-                                    spline: {//标志点
+                                    spline: {
                                         marker: {
                                             enabled: true
                                         }
@@ -1114,7 +957,8 @@ block content
                                 },
 
                                 colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969', '#FF8C00'],
-                                series: [{
+                                series: [
+                                    {
                                     name: 'Urine Output',
                                     data: sign_arr1
                                 },
@@ -1169,10 +1013,8 @@ block content
 
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
 
                     } else {
-                        //alert("Success!");
                         var drugcategory = [];
                         var drugresult = [];
                         var obj = {};
@@ -1193,8 +1035,6 @@ block content
                         var drug = [data[0]];
                         var drugflag = 0;
 
-
-                        //将不同charttime同样用药的记录删掉，得到不重复的用药记录
 
                         for (var w = 0; w < data.length; w++) {
                             for (var o = 0; o < drug.length; o++) {
@@ -1218,34 +1058,31 @@ block content
                             c++;
                         }
 
-                        //删除重复元素
                         for (var i = 0; i < drug.length; i++) {
 
                             if (!obj[drugcategory[i]]) {
-                                drugresult.push(drugcategory[i]);//drugresult存储不重复药品名
+                                drugresult.push(drugcategory[i]);
                                 obj[drugcategory[i]] = true;
                             }
 
                         }
-                        drugresult.sort(); //将药品显示按照自上至下的字母顺序重排
+                        drugresult.sort(); 
 
 
-                        //为了比较剂量大小，需要将原数组中每一种药组合在一起再比较
 
-                        for (var t = 0; t < drugresult.length; t++) {//遍历drugresult eg A B C D 0123
-                            var samedrug = [];//每一种新的药物设一个空白数组
+                        for (var t = 0; t < drugresult.length; t++) {
+                            var samedrug = [];
                             var j = 0;
-                            for (var u = 0; u < c; u++) {//遍历drugcategory eg A B A C D B A 0123456
+                            for (var u = 0; u < c; u++) {
                                 if (drugcategory[u][0] == drugresult[t][0]) {
                                     samedrug[j] = u;
-                                    j++;//将相同药物存进来 eg A 026
+                                    j++;
                                 }
                             }
 
                             var value = [];
                             for (var j0 = 0; j0 < j; j0++) {
 
-                                //单位换算:g,gm,mg,mg/ml,mg/kg,mg/hr,mg/min,mg/day,mg/24h,mg/kg/hr - mcg,mcg/ml,mcg/kg,mcg/h,mcg/kg/min
 
                                 value[j0] = parseFloat(dosevalue[samedrug[j0]][0]);
                                 if (doseunit[samedrug[j0]][0] == "g") value[j0] = value[j0] * 1000000;
@@ -1253,7 +1090,6 @@ block content
                                 else if (doseunit[samedrug[j0]][0] == "mg/min" || doseunit[samedrug[j0]][0] == "mg/kg/hr") value[j0] = value[j0] * 1000 / 60;
                                 else if (doseunit[samedrug[j0]][0] == "mg/day" || doseunit[samedrug[j0]][0] == "mg/24h") value[j0] = value[j0] * 1000 / 24;
 
-                                //为dosechange赋值
                                 if (j0 == 0) dosechange[samedrug[j0]] = "I";
                                 else if (value[j0] > value[j0 - 1]) {
                                     dosechange[samedrug[j0]] = "↑";
@@ -1270,14 +1106,14 @@ block content
 
                         for (var r = 0; r < c; r++) {
 
-                            if (starttime[r][0] == endtime[r][0]) {//时间点给药，end=start+1h
+                            if (starttime[r][0] == endtime[r][0]) {
 
                                 var stp = starttime[r][0]
                                 var tp = new Date(stp)
-                                var edt = new Date(tp.setHours(tp.getHours() + 1)).format("yyyy-MM-dd hh:mm:ss");
+                                var edt = new Date(tp.setHours(tp.getHours() + 1)).format("yyyy-MM-dd hh:mm:ss"); 
+
                                 arrData[r] = {
                                     x: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13), chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
-                                    // x2: Date.UTC(chGMT(starttime[r][0]).slice(0, 4), chGMT(starttime[r][0]).slice(5, 7) - 1, chGMT(starttime[r][0]).slice(8, 10), chGMT(starttime[r][0]).slice(11, 13) + 1, chGMT(starttime[r][0]).slice(14, 16), chGMT(starttime[r][0]).slice(17, 19)),
                                     x2: Date.UTC(chGMT(edt).slice(0, 4), chGMT(edt).slice(5, 7) - 1, chGMT(edt).slice(8, 10), chGMT(edt).slice(11, 13), chGMT(edt).slice(14, 16), chGMT(edt).slice(17, 19)),
                                     y: in_array(drugcategory[r], drugresult),
                                     strength: strength[r][0],
@@ -1303,16 +1139,8 @@ block content
                             }
                         }
 
-
-                        /*  本例子的目的是为了演示通过 Dom 事件、Highcharts 事件、Highcharts API 来讲一个页面中的多个图表进行联动的。
-                            本例通过循环创建类似的图表并绑定鼠标的滑动事件来对多个图表进行演示联动效果。*/
-
-
                         $(function () {
 
-                            /**
-                             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
-                             */
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -1327,7 +1155,6 @@ block content
                             }
 
 
-                            //用药情况
                             Highcharts.chart('timechart2', {
                                 chart: {
                                     type: 'xrange',
@@ -1362,25 +1189,22 @@ block content
                                     title: {
                                         text: ''
                                     },
-                                    categories: drugresult,//y轴的值(药品名称需要查询)
-                                    reversed: true,//y轴值上下顺序反向
+                                    categories: drugresult,
+                                    reversed: true,
                                     tickInterval: 1
                                 }],
 
 
-                                tooltip: {//label样式
+                                tooltip: {
 
                                     headerFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S}-{point.x2:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Drug:</b>{point.drug}<br><b>Strength:</b>{point.strength}<br><b>Dosage:</b>{point.dosevalue}{point.doseunit} ',
-                                    positioner: function () {//固定标签显示位置
+                                    positioner: function () {
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
 
-                                    crosshairs: [{            // 设置准星线样式
+
+                                    crosshairs: [{            
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1394,7 +1218,7 @@ block content
                                 },
 
 
-                                legend: {//图例右侧显示
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
@@ -1405,7 +1229,6 @@ block content
                                 series: [{
                                     name: 'Drugs',
                                     dashStyle: 'solid',
-                                    //borderColor: 'gray',
                                     pointWidth: 5,
                                     data: arrData,
                                     dataLabels: {
@@ -1447,16 +1270,11 @@ block content
                     var obj4 = {};
                     var obj5 = {};
                     var obj6 = {};
-                    // var obj1 = {};
                     var arrData = [];
 
+                    var tl = 0;
 
-                    // var b = 0;
-
-
-                    var tl = 0;//tl=sign_time.length
-
-                    var sign_time = [];//体征记录时间，横轴
+                    var sign_time = [];
                     var sign_arr = [];
                     var sign_arr1 = [];
                     var sign_arr2 = [];
@@ -1477,19 +1295,16 @@ block content
 
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
 
                     } else {
-                        //alert("Success!");
-
-
+                      
                         //////////// SURGERY VITAL SIGN DATA ////////////
 
 
-                        sign_arr[0] = data[0];//把重复的数据去掉,sign_arr包含全部charttime的所有数据
+                        sign_arr[0] = data[0];
                         sign_time[0] = sign_arr[0].MONITOR_TIME;
-                        var s = 1;//注意s是从1开始的，p也是从1开始的
-                        for (var p = 1; p < data.length; p++) {//循环将所有记录的时间加入数组，确定横轴
+                        var s = 1;
+                        for (var p = 1; p < data.length; p++) {
                             if (data[p].MONITOR_TIME != data[p - 1].MONITOR_TIME) {
                                 sign_arr[s] = data[p];
                                 sign_time[s] = sign_arr[s].MONITOR_TIME;
@@ -1498,9 +1313,9 @@ block content
                         }
 
 
-                        for (var ks = 0; ks < s; ks++) {//signarr1-signarr6代表六种体征检测值
+                        for (var ks = 0; ks < s; ks++) {
                             if (sign_arr[ks].HeartRate != null) {
-                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                sign_arr1[k10] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].HeartRate)
                                 }
@@ -1554,7 +1369,6 @@ block content
 
 
                         $(function () {
-                            //同步缩放效果
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -1568,7 +1382,6 @@ block content
                                 }
                             }
 
-                            //体征变化
                             Highcharts.chart('timechart3', {
                                 chart: {
                                     type: 'spline',
@@ -1587,7 +1400,7 @@ block content
                                 xAxis: {
                                     type: 'datetime',
                                     events: {
-                                        setExtremes: syncExtremes //属性：该图zoom时其他图zoom (该chart不设，其他chart设置时，其他图zoom时改图也会zoom)
+                                        setExtremes: syncExtremes 
                                     },
                                     title: {
                                         text: 'Time In Hospital'
@@ -1598,22 +1411,18 @@ block content
                                     title: {
                                         text: 'Measurement, Absolute Value'
                                     },
-                                    //reversed: true,//y轴值上下顺序反向
                                     tickInterval: 1,
                                     min: 0
                                 }],
 
-                                tooltip: {//label样式
+                                tooltip: {
                                     headerFormat: '<b>{series.name}:{point.y}</b><br>',
                                     pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
-                                    positioner: function () {//固定标签显示位置
-                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
+                                    positioner: function () {
+                                        return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
-                                    crosshairs: [{            // 设置准星线样式
+                                
+                                    crosshairs: [{           
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1624,36 +1433,21 @@ block content
                                         dashStyle: 'longdashdot'
                                     }]
                                 },
-                                //     % a:星期的缩写, 比如'Mon'.
-                                //     % A:星期的全写, 比如'Monday'.
-                                //     % d:日期的写法, 比如：01到31.
-                                //     % e:日期的写法, 1到31.
-                                //     % b:月的缩写, 比如'Jan'.
-                                //     % B:月的全写, 比如'January'.
-                                //     % m:阿拉伯月的写法, 0112.
-                                //     % y:年的缩写, 比如09代表2009.
-                                //     % Y:年的全写, 比如2009.
-                                //     % H:两位数的24小时写法, 比如00到23.
-                                //     % I:两位数的12小时写法, 00到11.
-                                //     % l(L字母的小写):12小时的写法, 1到11.
-                                //     % M:分钟写法, 00到59.
-                                //     % p:Upper case AM or PM.
-                                //     % P:Lower case AM or PM.
-                                //     % S:分钟写法, 00到59
+                          
 
-                                legend: {//图例右侧显示
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
                                 },
 
-                                plotOptions: {//line的图例标线
+                                plotOptions: {
                                     series: {
                                         label: {
                                             connectorAllowed: false
                                         }
                                     },
-                                    spline: {//标志点
+                                    spline: {
                                         marker: {
                                             enabled: true
                                         }
@@ -1708,7 +1502,6 @@ block content
 
                 success: function (data) {
 
-
                     var symcategory = [];
                     var symcategory_p = [];
                     var symcategory_n = [];
@@ -1727,39 +1520,32 @@ block content
 
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
-                        // window.close();
 
                     } else {
-                        //alert("Success!");
-
+                      
                         ////////EMR SYMPTOM DATA/////////
-
 
                         var c = 0;
 
                         for (var q = 0; q < data.length; q++) {
                             symcategory[c] = [data[q].SYMPTOM_NAME_EN];
                             starttime[c] = [data[q].RECORD_TIME];
-                            // endtime[c] = [data[q].RECORDTIME]; //都是点时间，直接设定endtime
                             attribute[c] = [data[q].SYMPTOM_ATTRIBUTE];
                             c++;
                         }
 
-                        //删除重复元素
                         for (var i = 0; i < data.length; i++) {
                             if (!obj[symcategory[i]]) {
-                                symresult.push(symcategory[i]);//symresult存储不重复症状名
+                                symresult.push(symcategory[i]);
                                 obj[symcategory[i]] = true;
                             }
                         }
-                        symresult.sort(); //将症状名称显示按照自上至下的字母顺序重排
+                        symresult.sort(); 
 
-
-                        //将症状分为两个series显示，所以先分成两个单独的数组group
                         var index_p = 0
                         var index_n = 0
                         for (var m = 0; m < c; m++) {
-                            if (attribute[m][0].indexOf('+') == 0) {  //array中的element为+ (不存在则为-1)
+                            if (attribute[m][0].indexOf('+') == 0) {  
                                 symcategory_p[index_p] = symcategory[m];
                                 starttime_p[index_p] = starttime[m];
                                 attribute_p[index_p] = attribute[m];
@@ -1775,9 +1561,6 @@ block content
 
 
                         for (var r = 0; r < index_p; r++) {
-                            // var stp = starttime_p[r][0]
-                            // var tp = new Date(stp)
-                            // var endtime_p = tp.setHours(tp.getHours()+1)
                             for (var u = symcategory_p.length - 1; u >= 0; u--) {
                                 if (symcategory_p[r][0] == symcategory_p[u][0]) break;
                             }
@@ -1785,10 +1568,7 @@ block content
 
                             arrData_p[r] = {
                                 x: Date.UTC(chGMT(starttime_p[r][0]).slice(0, 4), chGMT(starttime_p[r][0]).slice(5, 7) - 1, chGMT(starttime_p[r][0]).slice(8, 10), chGMT(starttime_p[r][0]).slice(11, 13), chGMT(starttime_p[r][0]).slice(14, 16), chGMT(starttime_p[r][0]).slice(17, 19)),
-                                //线段表示
                                 x2: Date.UTC(chGMT(starttime_p[u][0]).slice(0, 4), chGMT(starttime_p[u][0]).slice(5, 7) - 1, chGMT(starttime_p[u][0]).slice(8, 10), chGMT(starttime_p[u][0]).slice(11, 13), chGMT(starttime_p[u][0]).slice(14, 16), chGMT(starttime_p[u][0]).slice(17, 19)),
-                                //点表示
-                                // x2: Date.UTC(chGMT(endtime_p).slice(0, 4), chGMT(endtime_p).slice(5, 7) - 1, chGMT(endtime_p).slice(8, 10), chGMT(endtime_p).slice(11, 13), chGMT(endtime_p).slice(14, 16), chGMT(endtime_p).slice(17, 19)),
                                 y: in_array(symcategory_p[r], symresult),
                                 sym: symcategory_p[r][0],
                                 attribute: attribute_p[r],
@@ -1796,18 +1576,12 @@ block content
                             }
                         }
                         for (var r = 0; r < index_n; r++) {
-                            // var stn = starttime_n[r][0]
-                            // var tn = new Date(stn)
-                            // var endtime_n = tn.setHours(tn.getHours() + 1)
                             for (var v = symcategory_n.length - 1; v >= 0; v--) {
                                 if (symcategory_n[r][0] == symcategory_n[v][0]) break;
                             }
                             arrData_n[r] = {
                                 x: Date.UTC(chGMT(starttime_n[r][0]).slice(0, 4), chGMT(starttime_n[r][0]).slice(5, 7) - 1, chGMT(starttime_n[r][0]).slice(8, 10), chGMT(starttime_n[r][0]).slice(11, 13), chGMT(starttime_n[r][0]).slice(14, 16), chGMT(starttime_n[r][0]).slice(17, 19)),
-                                //线段表示
                                 x2: Date.UTC(chGMT(starttime_n[v][0]).slice(0, 4), chGMT(starttime_n[v][0]).slice(5, 7) - 1, chGMT(starttime_n[v][0]).slice(8, 10), chGMT(starttime_n[v][0]).slice(11, 13), chGMT(starttime_n[v][0]).slice(14, 16), chGMT(starttime_n[v][0]).slice(17, 19)),
-                                //点表示
-                                // x2: Date.UTC(chGMT(endtime_n).slice(0, 4), chGMT(endtime_n).slice(5, 7) - 1, chGMT(endtime_n).slice(8, 10), chGMT(endtime_n).slice(11, 13), chGMT(endtime_n).slice(14, 16), chGMT(endtime_n).slice(17, 19)),
                                 y: in_array(symcategory_n[r], symresult),
                                 sym: symcategory_n[r][0],
                                 attribute: attribute_n[r],
@@ -1818,8 +1592,6 @@ block content
 
 
                         $(function () {
-
-                            //同步缩放效果
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -1832,9 +1604,9 @@ block content
                                     });
                                 }
                             }
-
-                            //症状显示
+                         
                             Highcharts.chart('timechart4', {
+
                                 chart: {
                                     type: 'xrange',
                                     marginLeft: 150,
@@ -1850,7 +1622,6 @@ block content
                                 subtitle: {
                                     text: 'Drag to select the zoom area; Press ctrl to pan the chart left or right; Click on the legend to hide or resume display.'
                                 },
-
 
                                 xAxis: {
                                     type: 'datetime',
@@ -1868,25 +1639,21 @@ block content
                                     title: {
                                         text: ''
                                     },
-                                    categories: symresult,//y轴的值
-                                    reversed: true,//y轴值上下顺序反向
+                                    categories: symresult,
+                                    reversed: true,
                                     tickInterval: 1
                                 }],
 
 
-                                tooltip: {//label样式
+                                tooltip: {
 
                                     headerFormat: '<b>Record Time:</b>{point.x:%A,%b.%e,%Y,%H:%M:%S}<br>',
                                     pointFormat: '<b>Symptom Name:</b>{point.sym}<br><b>Attribute:</b>{point.attribute}<br>',
-                                    positioner: function () {//固定标签显示位置
+                                    positioner: function () {
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};
                                     },
-                                    // shadow: false,
-                                    // shape: 'round',
-                                    // borderWidth: 0,
-                                    // backgroundColor: 'rgba(0,0,0,0.2)',
-
-                                    crosshairs: [{            // 设置准星线样式
+                                   
+                                    crosshairs: [{            
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -1900,10 +1667,10 @@ block content
                                 },
 
 
-                                legend: {//图例右侧显示
+                                legend: {
                                     layout: 'vertical',
                                     align: 'right',
-                                    verticalAlign: 'middle'
+                                    verticalAlign: 'middle',
 
                                 },
 
@@ -1913,14 +1680,14 @@ block content
                                     dashStyle: 'solid',
                                     pointWidth: 2,
                                     data: arrData_p,
-                                    color: '#ffc1c1',
+                                    color:'#ffc1c1',
                                     dataLabels: {
                                         enabled: true,
                                         defer: false,
                                         inside: true,
                                         align: 'center'
-                                        // format: '{point.attribute}'
-                                    }
+                                    },
+
 
                                 },
                                     {
@@ -1934,71 +1701,16 @@ block content
                                             defer: false,
                                             inside: true,
                                             align: 'center'
-                                            // format: '{point.attribute}'
                                         }
 
                                     }]
+
                             });
                         });
                     }
                 }
             })
         }
-
-
-
-
-
-
-
-
-
-
-        //对于xrange右侧的图例，使其可以在series中设置color显示颜色（默认全为灰色），应用：emr symptoms
-        (function (H) {
-            H.Legend.prototype.getAllItems = function () {
-                var allItems = [];
-                H.each(this.chart.series, function (series) {
-                    var seriesOptions = series && series.options;
-                    if (series.type === 'xrange') {
-                        series.color = series.userOptions.color
-                    }
-                    // Handle showInLegend. If the series is linked to another series,
-                    // defaults to false.
-                    if (series && H.pick(
-                        seriesOptions.showInLegend,
-                        !H.defined(seriesOptions.linkedTo) ? undefined : false, true
-                    )) {
-
-                        // Use points or series for the legend item depending on
-                        // legendType
-                        allItems = allItems.concat(
-                            series.legendItems ||
-                            (
-                                seriesOptions.legendType === 'point' ?
-                                    series.data :
-                                    series
-                            )
-                        );
-                    }
-                });
-
-                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
-
-                return allItems;
-            }
-        })(Highcharts)
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2021,10 +1733,8 @@ block content
         }
 
         function chGMT(gmtDate) {
+           
             return gmtDate;
-           // var mydate = Date.parse(gmtDate);
-           // mydate.setHours(mydate.getHours());
-           // return mydate.format("yyyy-MM-dd hh:mm:ss");
         }
 
         function in_array(searchString, array) {
@@ -2049,14 +1759,39 @@ block content
             return true;
         }
 
+        
+        (function (H) {
+            H.Legend.prototype.getAllItems = function () {
+                var allItems = [];
+                len = this.chart.series.length;
+                H.each(this.chart.series, function (series) {
+                    if (series == undefined) ; 
+                    else {
+                        var seriesOptions = series && series.options;
+                        if (series.name === 'Symptoms+' || series.name === 'Symptoms-') {
+                            series.color = series.userOptions.color
+                        }
+                        if (series && H.pick(
+                            seriesOptions.showInLegend,
+                            !H.defined(seriesOptions.linkedTo) ? undefined : false, true
+                        )) {
+                            allItems = allItems.concat(
+                                series.legendItems ||
+                                (
+                                    seriesOptions.legendType === 'point' ?
+                                        series.data :
+                                        series
+                                )
+                            );
+                        }
+                    }
 
+                });
 
-
-
-
-
-
-
+                H.fireEvent(this, 'afterGetAllItems', {allItems: allItems});
+                return allItems;
+            }
+        })(Highcharts)
 
 
 
