@@ -120,6 +120,16 @@ alter table OUTPUTEVENTS
       add index OUTPUTEVENTS_idx04 (ITEMID),
       add index OUTPUTEVENTS_idx05 (VALUE);
 
+-- --------------
+-- INPUTEVENTS
+-- --------------
+
+alter table INPUTEVENTS
+      add index OUTPUTEVENTS_idx01 (SUBJECT_ID, HADM_ID),
+      add index OUTPUTEVENTS_idx02 (ICUSTAY_ID),
+      add index OUTPUTEVENTS_idx03 (CHARTTIME, STORETIME),
+      add index OUTPUTEVENTS_idx04 (AMOUNT);
+      
 -- -----------
 -- PATIENTS
 -- -----------
