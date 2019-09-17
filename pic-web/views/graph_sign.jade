@@ -8,7 +8,7 @@ block content
             meta(charset='utf-8')
             link(rel='icon', href='https://static.jianshukeji.com/highcharts/images/favicon.ico')
             meta(name="viewport" content="width=device-width, initial-scale=1")
-            
+
     script(src='/javascripts/jquery-1.11.0.min.js')
     script(src='/javascripts/highcharts.js')
     script(src='/javascripts/highcharts-more.js')
@@ -28,108 +28,265 @@ block content
 
     body
         div(id="timechart1" style='min-width: 300px;max-width: 1500px;margin: 1em auto;')
-            
+
 
     script(type='text/javascript').
         function search_graph_sign(Term2) {
+            //var Term =
+            !{JSON.stringify(term)};
             $.ajax({
                 url: "/search/graph_sign/list",
                 type: "POST",
                 data: {term: Term2},
+
                 success: function (data) {
+
                     if (data == '') {
                         alert("No or lack of relevant data!" + "\n" + "Click to close the message box.");
+                        // window.close();
+
                     } else {
-                        var sign_time = [];
+
+
+                        //alert("Success!");
+
+                        var sign_time = [];//体征记录时间，横轴
                         var sign_arr = [];
-                        var sign_arr1 = [];
-                        var sign_arr2 = [];
-                        var sign_arr3 = [];
-                        var sign_arr4 = [];
-                        var sign_arr5 = [];
-                        var sign_arr6 = [];
-                        var sign_arr7 = [];
-                        var sign_arr8 = [];
+                        var sign_arr1 = [];//UrineOutput
+                        var sign_arr2 = [];//DiastolicPressure
+                        var sign_arr3 = [];//SystolicPressure
+                        var sign_arr4 = [];//Temperature
+                        var sign_arr5 = [];//OxygenSaturation
+                        var sign_arr6 = [];//BloodGlucose
+                        var sign_arr7 = [];//HeartRate
+                        var sign_arr8 = [];//RespiratoryRate
+                        var sign_arr9 = [];//Pulse
+                        var sign_arr10 = [];//Excrement
+                        var sign_arr11 = [];//Input
+                        var sign_arr12 = [];//Output
+                        var sign_arr13 = [];//PainScore
+                        var sign_arr14 = [];//Height
+                        var sign_arr15 = [];//Weight
+                        var sign_arr16 = [];//AbdominalGirth
+                        var sign_arr17 = [];//BoxTemperature
+                        var sign_arr18 = [];//Calories
+                        var sign_arr19 = [];//HeadCircumference
+                        var k1 = 0;
+                        var k2 = 0;
+                        var k3 = 0;
+                        var k4 = 0;
+                        var k5 = 0;
+                        var k6 = 0;
+                        var k7 = 0;
+                        var k8 = 0;
+                        var k9 = 0;
                         var k10 = 0;
-                        var k20 = 0;
-                        var k30 = 0;
-                        var k40 = 0;
-                        var k50 = 0;
-                        var k60 = 0;
-                        var k70 = 0;
-                        var k80 = 0;
+                        var k11 = 0;
+                        var k12 = 0;
+                        var k13 = 0;
+                        var k14 = 0;
+                        var k15 = 0;
+                        var k16 = 0;
+                        var k17 = 0;
+                        var k18 = 0;
+                        var k19 = 0;
+
 
                         //////////// VITAL SIGN DATA ////////////
-                        sign_arr[0] = data[0];
+
+
+                        sign_arr[0] = data[0];//把重复的数据去掉,sign_arr包含全部charttime的所有数据
                         sign_time[0] = sign_arr[0].CHARTTIME;
-                        var s = 1;
-                        for (var p = 1; p < data.length; p++) {
+                        var s = 1;//注意s是从1开始的，p也是从1开始的
+                        for (var p = 1; p < data.length; p++) {//循环将所有记录的时间加入数组，确定横轴
                             if (data[p].CHARTTIME != data[p - 1].CHARTTIME) {
                                 sign_arr[s] = data[p];
                                 sign_time[s] = sign_arr[s].CHARTTIME;
                                 s++;
                             }
                         }
-                        for (var ks = 0; ks < s; ks++) {
+
+
+                        for (var ks = 0; ks < s; ks++) {//signarr1-signarr19代表体征检测值
                             if (sign_arr[ks].UrineOutput != null) {
-                                sign_arr1[k10] = {//sign_arr的顺序另外计数
+                                sign_arr1[k1] = {//sign_arr的顺序另外计数
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].UrineOutput)
                                 }
-                                k10++;
+                                k1++;
                             }
                             if (sign_arr[ks].DiastolicPressure != null) {
-                                sign_arr2[k20] = {
+                                sign_arr2[k2] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].DiastolicPressure)
                                 }
-                                k20++;
+                                k2++;
                             }
                             if (sign_arr[ks].SystolicPressure != null) {
-                                sign_arr3[k30] = {
+                                sign_arr3[k3] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].SystolicPressure)
                                 }
-                                k30++;
+                                k3++;
                             }
                             if (sign_arr[ks].Temperature != null) {
-                                sign_arr4[k40] = {
+                                sign_arr4[k4] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].Temperature)
                                 }
-                                k40++;
+                                k4++;
                             }
                             if (sign_arr[ks].OxygenSaturation != null) {
-                                sign_arr5[k50] = {
+                                sign_arr5[k5] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].OxygenSaturation)
                                 }
-                                k50++;
+                                k5++;
                             }
                             if (sign_arr[ks].BloodGlucose != null) {
-                                sign_arr6[k60] = {
+                                sign_arr6[k6] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].BloodGlucose)
                                 }
-                                k60++;
+                                k6++;
                             }
                             if (sign_arr[ks].HeartRate != null) {
-                                sign_arr7[k70] = {
+                                sign_arr7[k7] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].HeartRate)
                                 }
-                                k70++;
+                                k7++;
                             }
                             if (sign_arr[ks].RespiratoryRate != null) {
-                                sign_arr8[k80] = {
+                                sign_arr8[k8] = {
                                     x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
                                     y: Number(sign_arr[ks].RespiratoryRate)
                                 }
-                                k80++;
+                                k8++;
                             }
+                            if (sign_arr[ks].Pulse != null) {
+                                sign_arr9[k9] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Pulse)
+                                }
+                                k9++;
+                            }
+                            if (sign_arr[ks].Excrement != null) {
+                                sign_arr10[k10] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Excrement)
+                                }
+                                k10++;
+                            }
+                            if (sign_arr[ks].Input != null) {
+                                sign_arr11[k11] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Input)
+                                }
+                                k11++;
+                            }
+                            if (sign_arr[ks].Output != null) {
+                                sign_arr12[k12] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Output)
+                                }
+                                k12++;
+                            }
+                            if (sign_arr[ks].PainScore != null) {
+                                sign_arr13[k13] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].PainScore)
+                                }
+                                k13++;
+                            }
+                            if (sign_arr[ks].Height != null) {
+                                sign_arr14[k14] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Height)
+                                }
+                                k14++;
+                            }
+                            if (sign_arr[ks].Weight != null) {
+                                sign_arr15[k15] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Weight)
+                                }
+                                k15++;
+                            }
+                            if (sign_arr[ks].AbdominalGirth != null) {
+                                sign_arr16[k16] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].AbdominalGirth)
+                                }
+                                k16++;
+                            }
+                            if (sign_arr[ks].BoxTemperature != null) {
+                                sign_arr17[k17] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].BoxTemperature)
+                                }
+                                k17++;
+                            }
+                            if (sign_arr[ks].Calories != null) {
+                                sign_arr18[k18] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].Calories)
+                                }
+                                k18++;
+                            }
+                            if (sign_arr[ks].HeadCircumference != null) {
+                                sign_arr19[k19] = {
+                                    x: Date.UTC(chGMT(sign_time[ks]).slice(0, 4), chGMT(sign_time[ks]).slice(5, 7) - 1, chGMT(sign_time[ks]).slice(8, 10), chGMT(sign_time[ks]).slice(11, 13), chGMT(sign_time[ks]).slice(14, 16), chGMT(sign_time[ks]).slice(17, 19)),
+                                    y: Number(sign_arr[ks].HeadCircumference)
+                                }
+                                k19++;
+                            }
+
+
                         }
 
+
+                        /*  本例子的目的是为了演示通过 Dom 事件、Highcharts 事件、Highcharts API 来讲一个页面中的多个图表进行联动的。
+                            本例通过循环创建类似的图表并绑定鼠标的滑动事件来对多个图表进行演示联动效果。*/
+
+
                         $(function () {
+                            // /**
+                            //  * 为了让多个图表的提示框即十字准星线能够联动，这里绑定多个图表的附件 dom 的鼠标事件进行联动
+                            //  */
+                            // $('#timechart1').bind('mousemove touchmove touchstart', function (e) {
+                            //     var chart,
+                            //         point,
+                            //         i,
+                            //         event;
+                            //     for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+                            //         chart = Highcharts.charts[i];
+                            //         event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+                            //         point = chart.series[0].searchPoint(event, true); // Get the hovered point
+                            //         if (point) {
+                            //             point.highlight(e);
+                            //         }
+                            //     }
+                            // });
+
+                            // /**
+                            //  * 重写内部的方法， 这里是将提示框即十字准星的隐藏函数关闭
+                            //  */
+                            // Highcharts.Pointer.prototype.reset = function () {
+                            //     return undefined;
+                            // };
+                            // /**
+                            //  * 高亮当前的数据点，并设置鼠标滑动状态及绘制十字准星线
+                            //  */
+                            // Highcharts.Point.prototype.highlight = function (event) {
+                            //     this.onMouseOver(); // 显示鼠标激活标识
+                            //     this.series.chart.tooltip.refresh(this); // 显示提示框
+                            //     this.series.chart.xAxis[0].drawCrosshair(event, this); // 显示十字准星线
+                            // };
+
+                            /*
+                             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
+                             */
                             function syncExtremes(e) {
                                 var thisChart = this.chart;
                                 if (e.trigger !== 'syncExtremes') {
@@ -143,6 +300,8 @@ block content
                                 }
                             }
 
+
+                            //体征变化
                             Highcharts.chart('timechart1', {
                                 chart: {
                                     type: 'spline',
@@ -150,6 +309,7 @@ block content
                                     zoomType: 'xy',
                                     panning: true,
                                     panKey: 'ctrl'
+
                                 },
                                 title: {
                                     text: 'VITAL SIGNS-ICUSTAYID: ' + Term2
@@ -163,24 +323,33 @@ block content
                                     events: {
                                         setExtremes: syncExtremes
                                     },
+
+
                                     title: {
                                         text: 'Time In ICU'
                                     }
+
                                 },
                                 yAxis: [{
                                     title: {
                                         text: 'Measurement, Absolute Value'
                                     },
+                                    //reversed: true,//y轴值上下顺序反向
                                     tickInterval: 1,
                                     min: 0
                                 }],
-                                tooltip: {
+
+                                tooltip: {//label样式
                                     headerFormat: '<b>{series.name}:{point.y}</b><br>',
                                     pointFormat: '{point.x:%A,%b.%e,%Y,%H:%M:%S} ',
-                                    positioner: function () {
+                                    positioner: function () {//固定标签显示位置
                                         return {x: this.chart.chartWidth - this.label.width - 1, y: 0};//x: this.chart.chartWidth - this.label.width 表示right aligned；y: -1 表示align to title
                                     },
-                                    crosshairs: [{
+                                    // shadow: false,
+                                    // shape: 'round',
+                                    // borderWidth: 0,
+                                    // backgroundColor: 'rgba(0,0,0,0.2)',
+                                    crosshairs: [{            // 设置准星线样式
                                         width: 1,
                                         color: "#006cee",
                                         dashStyle: 'longdashdot'
@@ -191,31 +360,103 @@ block content
                                         dashStyle: 'longdashdot'
                                     }]
                                 },
-                                legend: {
+                                //     % a:星期的缩写, 比如'Mon'.
+                                //     % A:星期的全写, 比如'Monday'.
+                                //     % d:日期的写法, 比如：01到31.
+                                //     % e:日期的写法, 1到31.
+                                //     % b:月的缩写, 比如'Jan'.
+                                //     % B:月的全写, 比如'January'.
+                                //     % m:阿拉伯月的写法, 0112.
+                                //     % y:年的缩写, 比如09代表2009.
+                                //     % Y:年的全写, 比如2009.
+                                //     % H:两位数的24小时写法, 比如00到23.
+                                //     % I:两位数的12小时写法, 00到11.
+                                //     % l(L字母的小写):12小时的写法, 1到11.
+                                //     % M:分钟写法, 00到59.
+                                //     % p:Upper case AM or PM.
+                                //     % P:Lower case AM or PM.
+                                //     % S:分钟写法, 00到59
+
+                                legend: {//图例右侧显示
                                     layout: 'vertical',
                                     align: 'right',
                                     verticalAlign: 'middle'
                                 },
-                                plotOptions: {
+
+                                plotOptions: {//line的图例标线
                                     series: {
                                         label: {
                                             connectorAllowed: false
                                         }
                                     },
-                                    spline: {
+                                    spline: {//标志点
                                         marker: {
                                             enabled: true
                                         }
                                     }
                                 },
-                                colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969', '#FF8C00'],
-                                series: [{
-                                    name: 'Urine Output',
-                                    data: sign_arr1
-                                },
+
+                                // colors: ['#ae0000', '#ff85e5', '#036', '#ffc300', '#3ecc8c', '#6CF', '#696969', '#FF8C00'],
+                                series: [
+                                    {
+                                        name: 'Abdominal Girth',
+                                        data: sign_arr16
+                                    },
+                                    {
+                                        name: 'Blood Glucose',
+                                        data: sign_arr6
+                                    },
+                                    {
+                                        name: 'Box Temperature',
+                                        data: sign_arr17
+                                    },
+                                    {
+                                        name: 'Calories',
+                                        data: sign_arr18
+                                    },
                                     {
                                         name: 'Diastolic Pressure',
                                         data: sign_arr2
+                                    },
+                                    {
+                                        name: 'Excrement',
+                                        data: sign_arr10
+                                    },
+                                    {
+                                        name: 'Head Circumference',
+                                        data: sign_arr19
+                                    },
+                                    {
+                                        name: 'Heart Rate',
+                                        data: sign_arr7
+                                    },
+                                    {
+                                        name: 'Height',
+                                        data: sign_arr14
+                                    },
+                                    {
+                                        name: 'Input',
+                                        data: sign_arr11
+                                    },
+                                    {
+                                        name: 'Output',
+                                        data: sign_arr12
+                                    },
+                                    {
+                                        name: 'Oxygen Saturation',
+                                        data: sign_arr5
+                                    },
+                                    {
+                                        name: 'Pain Score',
+                                        data: sign_arr13
+                                    },
+                                    {
+                                        name: 'Pulse',
+                                        data: sign_arr9
+                                    },
+                                    {
+                                        name: 'Respiratory Rate',
+                                        data: sign_arr8
                                     },
                                     {
                                         name: 'Systolic Pressure',
@@ -226,28 +467,23 @@ block content
                                         data: sign_arr4
                                     },
                                     {
-                                        name: 'Oxygen Saturation',
-                                        data: sign_arr5
+                                        name: 'Urine Output',
+                                        data: sign_arr1
                                     },
                                     {
-                                        name: 'Blood Glucose',
-                                        data: sign_arr6
-                                    },
-                                    {
-                                        name: 'Heart Rate',
-                                        data: sign_arr7
-                                    },
-                                    {
-                                        name: 'Respiratory Rate',
-                                        data: sign_arr8
+                                        name: 'Weight',
+                                        data: sign_arr15
                                     }
                                 ]
                             });
+
                         });
                     }
                 }
             })
         }
+
+
 
            Date.prototype.format = function (format) {
                var o = {
@@ -259,12 +495,20 @@ block content
                    "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
                    "S": this.getMilliseconds() //millisecond
                }
+
            }
 
            function chGMT(gmtDate) {
                return gmtDate;
            }
 
+
+
         window.onload = function () {
+
             search_graph_sign();
+
         }
+
+
+
