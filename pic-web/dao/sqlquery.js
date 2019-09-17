@@ -3,7 +3,7 @@
 var user = {
     //query:'select PATIENTS.SUBJECT_ID,GENDER,DOB,CHARTEVENTS.ITEMID,CHARTTIME,VALUENUM,VALUEUOM from PATIENTS,CHARTEVENTS where PATIENTS.SUBJECT_ID="{0}" and CHARTEVENTS.SUBJECT_ID=PATIENTS.SUBJECT_ID'
     //signs
-    query_sign:'select patients_new.SUBJECT_ID,patients_new.HADM_ID,patients_new.ICUSTAY_ID,chartevents_new.CHARTTIME,UrineOutput,DiastolicPressure,SystolicPressure,Temperature,OxygenSaturation,BloodGlucose,HeartRate,RespiratoryRate from patients_new,chartevents_new where patients_new.ICUSTAY_ID="{0}" and chartevents_new.ICUSTAY_ID="{0}" order by chartevents_new.CHARTTIME',
+    query_sign:'select patients_new.SUBJECT_ID,patients_new.HADM_ID,patients_new.ICUSTAY_ID,chartevents_new.CHARTTIME,Temperature,Pulse,`HeartRate`,`RespiratoryRate`,`OxygenSaturation`,Excrement,`UrineOutput`,`Input`,`Output`,`BloodGlucose`,`PainScore`,Height,Weight,`DiastolicPressure`,`SystolicPressure`,`AbdominalGirth`,`BoxTemperature`,Calories,`HeadCircumference` from patients_new,chartevents_new where patients_new.ICUSTAY_ID="{0}" and chartevents_new.ICUSTAY_ID="{0}" order by chartevents_new.CHARTTIME',
     //medication
     query_med:'select patients_new.SUBJECT_ID,patients_new.HADM_ID,patients_new.ICUSTAY_ID,prescriptions_new.STARTDATE,ENDDATE,DRUG_NAME_EN,PROD_STRENGTH,DOSE_VAL_RX,DOSE_UNIT_RX from patients_new,prescriptions_new where patients_new.ICUSTAY_ID="{0}" and prescriptions_new.ICUSTAY_ID="{0}" order by prescriptions_new.STARTDATE,prescriptions_new.ENDDATE',
     //basic information
@@ -21,7 +21,7 @@ var user = {
     queryICULOS:'select floor(LOS),count(*) as value from icustay where LOS >=0 and LOS <30 group by floor(LOS)',
     queryPatients:'SELECT GENDER,count(*) as value FROM patients_new where GENDER =\'F\' or GENDER =\'M\' group by GENDER',
     queryPatientAge:'SELECT TIMESTAMPDIFF(YEAR,p.DOB,s.INTIME) as age,count(*) as value FROM icustay as s, patients_new as p where p.SUBJECT_ID = s.SUBJECT_ID  group by TIMESTAMPDIFF(YEAR,p.DOB,s.INTIME)',
-    queryTopDisease:'SELECT dd.TITLE,count(*) as value FROM admissions d,D_ICD_DIAGNOSES dd where dd.ICD10_CODE_CN = d.ICD10_CODE group by dd.TITLE order by count(*) desc limit 10',
+    queryTopDisease:'SELECT dd.TITLE_EN,count(*) as value FROM admissions d,D_ICD_DIAGNOSES_CN dd where dd.ICD10 = d.ICD10_CODE group by dd.TITLE_EN order by count(*) desc limit 10',
 
     // queryDiagTerms:"SELECT ICD9_CODE, SHORT_TITLE  FROM pMIMIC.D_ICD_DIAGNOSES where short_title like '{0}%' limit  10",
     // queryProcedureTerms:"SELECT ICD9_CODE, SHORT_TITLE FROM pMIMIC.D_ICD_PROCEDURES where SHORT_TITLE like '{0}%' limit 10",
