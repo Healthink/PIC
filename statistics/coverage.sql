@@ -1,0 +1,1 @@
+--this the sql script to measure datatable coverage
