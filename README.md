@@ -4,3 +4,15 @@ PIC (Pediatric Intensive Care) is a large pediatric-specific single-center bilin
 The official website of PIC is available at pic.nbscn.org
 
 The administrator of PIC is Haomin Li (hmli@zju.edu.cn)
+
+buildpic/mysql  
+    with sql script to import PIC dataset into MySQL and create index on datatables
+
+pic-doc 
+    The source code of PIC document website 
+    
+pic-website
+    the source code of PIC website include the visulization solution of PIC
+    
+statistics
+    the source code of python to show the statistics in PIC paper
