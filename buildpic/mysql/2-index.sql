@@ -35,7 +35,7 @@ alter table CHARTEVENTS
 -- ------------------
 
 alter table D_ICD_DIAGNOSES
-      add index D_ICD_DIAG_idx02 (ICD10_CODE);
+      add index D_ICD_DIAG_idx02 (ICD10_CODE(255));
 
 
 -- ---------
@@ -83,6 +83,16 @@ alter table ICUSTAYS
       add index ICUSTAYS_idx05 (LAST_CAREUNIT);
 
 
+-- --------------
+-- INPUTEVENTS
+-- --------------
+
+alter table INPUTEVENTS
+      add index OUTPUTEVENTS_idx01 (SUBJECT_ID, HADM_ID),
+      add index OUTPUTEVENTS_idx02 (ICUSTAY_ID),
+      add index OUTPUTEVENTS_idx03 (CHARTTIME, STORETIME),
+      add index OUTPUTEVENTS_idx04 (AMOUNT);
+
 -- ------------
 -- LABEVENTS
 -- ------------
@@ -120,15 +130,6 @@ alter table OUTPUTEVENTS
       add index OUTPUTEVENTS_idx04 (ITEMID),
       add index OUTPUTEVENTS_idx05 (VALUE);
 
--- --------------
--- INPUTEVENTS
--- --------------
-
-alter table INPUTEVENTS
-      add index OUTPUTEVENTS_idx01 (SUBJECT_ID, HADM_ID),
-      add index OUTPUTEVENTS_idx02 (ICUSTAY_ID),
-      add index OUTPUTEVENTS_idx03 (CHARTTIME, STORETIME),
-      add index OUTPUTEVENTS_idx04 (AMOUNT);
       
 -- -----------
 -- PATIENTS
