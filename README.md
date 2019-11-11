@@ -8,6 +8,8 @@ The administrator of PIC is Haomin Li (hmli@zju.edu.cn)
 
 /buildpic/mysql  --with sql script to import PIC dataset into MySQL and create index on datatables
 
+/demo -- some demos about how to use PIC dataset
+
 /pic-doc --the source code of PIC document website 
     
 /pic-website  --the source code of PIC website include the visulization solution of PIC
