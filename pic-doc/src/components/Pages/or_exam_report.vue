@@ -59,6 +59,11 @@
 </tr>
 
 <tr>
+<td>REPORTTIME</td>
+<td>DATETIME</td>
+</tr>
+
+<tr>
 <td>EXAM_ITEM_TYPE_NAME</td>
 <td>VARCHAR</td>
 </tr>
@@ -81,9 +86,9 @@
 
 <p>Identifiers which specify the patient: <code>SUBJECT_ID</code> is unique to a patient and <code>HADM_ID</code> is unique to a patient hospital stay.</p>
 
-<h2 id="examtime"><code>EXAMTIME</code></h2>
+<h2 id="examtime"><code>EXAMTIME</code>,<code>REPORTTIME</code></h2>
 
-<p><code>EXAMTIME</code> records the date at which the exam was performed.</p>
+<p><code>EXAMTIME</code> records the date at which the exam was performed. <code>REPORTTIME</code> records the date at which the report was generated.</p>
 
 <h2 id="exam-item-part-name"><code>EXAM_ITEM_TYPE_NAME</code>, <code>EXAM_ITEM_NAME</code>, <code>EXAM_PART_NAME</code></h2>
 
@@ -99,7 +104,7 @@
 <li><a href="#detailed-description">Detailed Description</a>
 <ul>
 <li><a href="#subject-id-hadm-id"><code>SUBJECT_ID</code>, <code>HADM_ID</code></a></li>
-<li><a href="#examtime"><code>EXAMTIME</code></a></li>
+<li><a href="#examtime"><code>EXAMTIME</code>,<code>REPORTTIME</code></a></li>
 <li><a href="#exam-item-part-name"><code>EXAM_ITEM_TYPE_NAME</code>, <code>EXAM_ITEM_NAME</code>, <code>EXAM_PART_NAME</code></a></li>
 </ul></li>
 </ul>
