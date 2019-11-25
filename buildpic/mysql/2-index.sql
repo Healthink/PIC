@@ -118,7 +118,7 @@ alter table MICROBIOLOGYEVENTS
 
 alter table OR_EXAM_REPORTS
       add index OR_EXAM_REPORTS_idx01 (SUBJECT_ID, HADM_ID),
-      add index OR_EXAM_REPORTS_idx02 (EXAMTIME);
+      add index OR_EXAM_REPORTS_idx02 (EXAMTIME, REPORTTIME);
 -- --------------
 -- OUTPUTEVENTS
 -- --------------
