@@ -74,12 +74,12 @@
 </tr>
 
 <tr>
-<td>ADMISSION_LOCATION</td>
+<td>ADMISSION_DEPARTMENT</td>
 <td>VARCHAR</td>
 </tr>
 
 <tr>
-<td>DISCHARGE_LOCATION</td>
+<td>DISCHARGE_DEPARTMENT</td>
 <td>VARCHAR</td>
 </tr>
 
@@ -141,19 +141,19 @@
 
 <h1 id="detailed-description">Detailed description</h1>
 
-<p>The <code>ADMISSIONS</code> table defines all <code>HADM_ID</code> present in the database, covering an admission period between 14 November 2010 and 3 April 2019.</p>
+<p>The <code>ADMISSIONS</code> table defines all <code>HADM_ID</code> present in the database, covering an admission period between November 2010 and December 2018.</p>
 
 <h2 id="subject-id-hadm-id"><code>SUBJECT_ID</code>, <code>HADM_ID</code></h2>
 
-<p>Each row of this table contains a unique <code>HADM_ID</code>, which represents a single patient’s admission to the hospital. <code>HADM_ID</code> ranges from 100000 - 115032. It is possible for this table to have duplicate <code>SUBJECT_ID</code>, indicating that a single patient had multiple admissions to the hospital. The ADMISSIONS table can be linked to the PATIENTS table using <code>SUBJECT_ID</code>.</p>
+<p>Each row of this table contains a unique <code>HADM_ID</code>, which represents a single patient’s admission to the hospital. <code>HADM_ID</code> ranges from 100000 - 114202. It is possible for this table to have duplicate <code>SUBJECT_ID</code>, indicating that a single patient had multiple admissions to the hospital. The ADMISSIONS table can be linked to the PATIENTS table using <code>SUBJECT_ID</code>.</p>
 
 <h2 id="admittime-dischtime-deathtime"><code>ADMITTIME</code>, <code>DISCHTIME</code>, <code>DEATHTIME</code></h2>
 
 <p><code>ADMITTIME</code> provides the date and time the patient was admitted to the hospital, while <code>DISCHTIME</code> provides the date and time the patient was discharged from the hospital. If applicable, <code>DEATHTIME</code> provides the time of in-hospital death for the patient. Note that <code>DEATHTIME</code> is only present if the patient died in-hospital, and is almost always the same as the patient’s <code>DISCHTIME</code>. However, there can be some discrepancies due to typographical errors.</p>
 
-<h2 id="admission-location-discharge"><code>ADMISSION_LOCATION</code>, <code>DISCHARGE_LOCATION</code></h2>
+<h2 id="admission-location-discharge"><code>ADMISSION_DEPARTMENT</code>, <code>DISCHARGE_DEPARTMENT</code></h2>
 
-<p><code>ADMISSION_LOCATION</code>,<code>DISCHARGE_LOCATION</code> provide information about the departments of the patient admitted to or discharged from the hospital.
+<p><code>ADMISSION_DEPARTMENT</code>,<code>DISCHARGE_DEPARTMENT</code> provide information about the departments of the patient admitted to or discharged from the hospital.
 <h2 id="insurance-language-religion-marital-status-ethnicity"><code>INSURANCE</code>, <code>LANGUAGE</code>, <code>RELIGION</code>, <code>MARITAL_STATUS</code>, <code>ETHNICITY</code></h2>
 
 <p>The <code>INSURANCE</code>, <code>LANGUAGE</code>, <code>RELIGION</code>, <code>MARITAL_STATUS</code>, <code>ETHNICITY</code> columns describe patient demographics. These columns occur in the ADMISSIONS table as they are originally sourced from the admission, discharge, and transfers (ADT) data from the hospital database. The values occasionally change between hospital admissions (<code>HADM_ID</code>) for a single patient (<code>SUBJECT_ID</code>). This is reasonable for some fields (e.g. <code>MARITAL_STATUS</code>, <code>RELIGION</code>), but less reasonable for others (e.g. <code>ETHNICITY</code>).</p>
@@ -183,7 +183,7 @@
 <li><a href="#subject-id-hadm-id"><code>SUBJECT_ID</code>, <code>HADM_ID</code></a></li>
 <li><a href="#admittime-dischtime-deathtime"><code>ADMITTIME</code>, <code>DISCHTIME</code>, <code>DEATHTIME</code></a></li>
 <li><a href="#admission-type"><code>ADMISSION_TYPE</code></a></li>
-<li><a href="#admission-location-discharge"><code>ADMISSION_LOCATION</code>, <code>DISCHARGE_LOCATION</code></a></li>
+<li><a href="#admission-location-discharge"><code>ADMISSION_DEPARTMENT</code>, <code>DISCHARGE_DEPARTMENT</code></a></li>
 <li><a href="#insurance-language-religion-marital-status-ethnicity"><code>INSURANCE</code>, <code>LANGUAGE</code>, <code>RELIGION</code>,
 <code>MARITAL_STATUS</code>, <code>ETHNICITY</code></a></li>
 <li><a href="#edregtime-edouttime"><code>EDREGTIME</code>, <code>EDOUTTIME</code></a></li>
