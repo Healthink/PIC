@@ -1,0 +1,274 @@
+-- ----------------------------------------------------------------
+--
+-- This is a script to add the PIC constraints for PostgreSQL.
+-- 
+-- ----------------------------------------------------------------
+
+-- ---------- --
+-- ADMISSIONS --
+-- ---------- --
+
+-- subject_id
+ALTER TABLE ADMISSIONS DROP CONSTRAINT IF EXISTS admissions_fk_subject_id;
+ALTER TABLE ADMISSIONS
+ADD CONSTRAINT admissions_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
+-- ----------- --
+-- CHARTEVENTS --
+-- ----------- --
+
+-- subject_id
+ALTER TABLE CHARTEVENTS DROP CONSTRAINT IF EXISTS chartevents_fk_subject_id;
+ALTER TABLE CHARTEVENTS
+ADD CONSTRAINT chartevents_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE CHARTEVENTS DROP CONSTRAINT IF EXISTS chartevents_fk_hadm_id;
+ALTER TABLE CHARTEVENTS
+ADD CONSTRAINT chartevents_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- icustay_id
+ALTER TABLE CHARTEVENTS DROP CONSTRAINT IF EXISTS chartevents_fk_icustay_id;
+ALTER TABLE CHARTEVENTS
+ADD CONSTRAINT chartevents_fk_icustay_id
+  FOREIGN KEY (ICUSTAY_ID)
+  REFERENCES ICUSTAYS(ICUSTAY_ID);
+
+-- itemid
+ALTER TABLE CHARTEVENTS DROP CONSTRAINT IF EXISTS chartevents_fk_itemid;
+ALTER TABLE CHARTEVENTS
+ADD CONSTRAINT chartevents_fk_itemid
+  FOREIGN KEY (ITEMID)
+  REFERENCES D_ITEMS(ITEMID);
+
+-- ------------- --
+-- DIAGNOSES_ICD --
+-- ------------- --
+
+-- subject_id
+ALTER TABLE DIAGNOSES_ICD DROP CONSTRAINT IF EXISTS diagnoses_icd_fk_subject_id;
+ALTER TABLE DIAGNOSES_ICD
+ADD CONSTRAINT diagnoses_icd_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE DIAGNOSES_ICD DROP CONSTRAINT IF EXISTS diagnoses_icd_fk_hadm_id;
+ALTER TABLE DIAGNOSES_ICD
+ADD CONSTRAINT diagnoses_icd_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- icd10_code_cn
+ALTER TABLE DIAGNOSES_ICD DROP CONSTRAINT IF EXISTS diagnoses_icd_fk_icd10_code_cn;
+ALTER TABLE DIAGNOSES_ICD
+ADD CONSTRAINT diagnoses_icd_fk_icd10_code_cn
+  FOREIGN KEY (ICD10_CODE_CN)
+  REFERENCES D_ICD_DIAGNOSES(ICD10_CODE_CN);
+
+
+-- ------------ --
+-- EMR_SYMPTOMS --
+-- ------------ --
+
+-- subject_id
+ALTER TABLE EMR_SYMPTOMS DROP CONSTRAINT IF EXISTS emr_symptoms_fk_subject_id;
+ALTER TABLE EMR_SYMPTOMS
+ADD CONSTRAINT emr_symptoms_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
+-- hadm_id
+ALTER TABLE EMR_SYMPTOMS DROP CONSTRAINT IF EXISTS emr_symptoms_fk_hadm_id;
+ALTER TABLE EMR_SYMPTOMS
+ADD CONSTRAINT emr_symptoms_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+
+-- -------- --
+-- ICUSTAYS --
+-- -------- --
+
+-- subject_id
+ALTER TABLE ICUSTAYS DROP CONSTRAINT IF EXISTS icustays_fk_subject_id;
+ALTER TABLE ICUSTAYS
+ADD CONSTRAINT icustays_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
+-- hadm_id
+ALTER TABLE ICUSTAYS DROP CONSTRAINT IF EXISTS icustays_fk_hadm_id;
+ALTER TABLE ICUSTAYS
+ADD CONSTRAINT icustays_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+
+-- --------- --
+-- LABEVENTS --
+-- --------- --
+
+-- subject_id
+ALTER TABLE LABEVENTS DROP CONSTRAINT IF EXISTS labevents_fk_subject_id;
+ALTER TABLE LABEVENTS
+ADD CONSTRAINT labevents_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE LABEVENTS DROP CONSTRAINT IF EXISTS labevents_fk_hadm_id;
+ALTER TABLE LABEVENTS
+ADD CONSTRAINT labevents_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- item_id
+ALTER TABLE LABEVENTS DROP CONSTRAINT IF EXISTS labevents_fk_itemid;
+ALTER TABLE LABEVENTS
+ADD CONSTRAINT labevents_fk_itemid
+  FOREIGN KEY (ITEMID)
+  REFERENCES D_LABITEMS(ITEMID);
+
+-- ------------------ --
+-- MICROBIOLOGYEVENTS --
+-- ------------------ --
+
+-- subject_id
+ALTER TABLE MICROBIOLOGYEVENTS DROP CONSTRAINT IF EXISTS microbiologyevents_fk_subject_id;
+ALTER TABLE MICROBIOLOGYEVENTS
+ADD CONSTRAINT microbiologyevents_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE MICROBIOLOGYEVENTS DROP CONSTRAINT IF EXISTS microbiologyevents_fk_hadm_id;
+ALTER TABLE MICROBIOLOGYEVENTS
+ADD CONSTRAINT microbiologyevents_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- ab_itemid
+ALTER TABLE MICROBIOLOGYEVENTS DROP CONSTRAINT IF EXISTS microbiologyevents_fk_ab_itemid;
+ALTER TABLE MICROBIOLOGYEVENTS
+ADD CONSTRAINT microbiologyevents_fk_ab_itemid
+  FOREIGN KEY (AB_ITEMID)
+  REFERENCES D_ITEMS(ITEMID);
+
+-- org_itemid
+ALTER TABLE MICROBIOLOGYEVENTS DROP CONSTRAINT IF EXISTS microbiologyevents_fk_org_itemid;
+ALTER TABLE MICROBIOLOGYEVENTS
+ADD CONSTRAINT microbiologyevents_fk_org_itemid
+  FOREIGN KEY (ORG_ITEMID)
+  REFERENCES D_ITEMS(ITEMID);
+
+-- --------------- --
+-- OR_EXAM_REPORTS --
+-- --------------- --
+
+-- subject_id
+ALTER TABLE OR_EXAM_REPORTS DROP CONSTRAINT IF EXISTS or_exam_reports_fk_subject_id;
+ALTER TABLE OR_EXAM_REPORTS
+ADD CONSTRAINT or_exam_reports_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE OR_EXAM_REPORTS DROP CONSTRAINT IF EXISTS or_exam_reports_fk_hadm_id;
+ALTER TABLE OR_EXAM_REPORTS
+ADD CONSTRAINT or_exam_reports_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- ------------ --
+-- OUTPUTEVENTS --
+-- ------------ --
+
+-- subject_id
+ALTER TABLE OUTPUTEVENTS DROP CONSTRAINT IF EXISTS outputevents_fk_subject_id;
+ALTER TABLE OUTPUTEVENTS
+ADD CONSTRAINT outputevents_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE OUTPUTEVENTS DROP CONSTRAINT IF EXISTS outputevents_fk_hadm_id;
+ALTER TABLE OUTPUTEVENTS
+ADD CONSTRAINT outputevents_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- icustay_id
+ALTER TABLE OUTPUTEVENTS DROP CONSTRAINT IF EXISTS outputevents_fk_icustay_id;
+ALTER TABLE OUTPUTEVENTS
+ADD CONSTRAINT outputevents_fk_icustay_id
+  FOREIGN KEY (ICUSTAY_ID)
+  REFERENCES ICUSTAYS(ICUSTAY_ID);
+
+-- itemid
+ALTER TABLE OUTPUTEVENTS DROP CONSTRAINT IF EXISTS outputevents_fk_itemid;
+ALTER TABLE OUTPUTEVENTS
+ADD CONSTRAINT outputevents_fk_itemid
+  FOREIGN KEY (ITEMID)
+  REFERENCES D_ITEMS(ITEMID);
+
+-- ------------- --
+-- PRESCRIPTIONS --
+-- ------------- --
+
+-- subject_id
+ALTER TABLE PRESCRIPTIONS DROP CONSTRAINT IF EXISTS prescriptions_fk_subject_id;
+ALTER TABLE PRESCRIPTIONS
+ADD CONSTRAINT prescriptions_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+
+-- hadm_id
+ALTER TABLE PRESCRIPTIONS DROP CONSTRAINT IF EXISTS prescriptions_fk_hadm_id;
+ALTER TABLE PRESCRIPTIONS
+ADD CONSTRAINT prescriptions_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- icustay_id
+ALTER TABLE PRESCRIPTIONS DROP CONSTRAINT IF EXISTS prescriptions_fk_icustay_id;
+ALTER TABLE PRESCRIPTIONS
+ADD CONSTRAINT prescriptions_fk_icustay_id
+  FOREIGN KEY (ICUSTAY_ID)
+  REFERENCES ICUSTAYS(ICUSTAY_ID);
+
+
+-- ------------------- --
+-- SURGERY_VITAL_SIGNS --
+-- ------------------- --
+
+-- subject_id
+ALTER TABLE SURGERY_VITAL_SIGNS DROP CONSTRAINT IF EXISTS surgery_vital_signs_fk_subject_id;
+ALTER TABLE SURGERY_VITAL_SIGNS
+ADD CONSTRAINT surgery_vital_signs_fk_subject_id
+  FOREIGN KEY (SUBJECT_ID)
+  REFERENCES PATIENTS(SUBJECT_ID);
+
+-- hadm_id
+ALTER TABLE SURGERY_VITAL_SIGNS DROP CONSTRAINT IF EXISTS surgery_vital_signs_fk_hadm_id;
+ALTER TABLE SURGERY_VITAL_SIGNS
+ADD CONSTRAINT surgery_vital_signs_fk_hadm_id
+  FOREIGN KEY (HADM_ID)
+  REFERENCES ADMISSIONS(HADM_ID);
+
+-- itemid
+ALTER TABLE SURGERY_VITAL_SIGNS DROP CONSTRAINT IF EXISTS osurgery_vital_signs_fk_itemid;
+ALTER TABLE SURGERY_VITAL_SIGNS
+ADD CONSTRAINT surgery_vital_signs_fk_itemid
+  FOREIGN KEY (ITEMID)
+  REFERENCES D_ITEMS(ITEMID);
