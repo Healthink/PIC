@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "ajax": "0.0.4",
-    "async": "2.6.1",
+    "async": "3.2.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
