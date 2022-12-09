@@ -8,10 +8,10 @@
   "dependencies": {
     "ajax": "0.0.4",
     "async": "2.6.1",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "~4.16.0",
+    "express": "~4.18.2",
     "formidable": "^1.2.1",
     "http-errors": "~1.6.2",
     "jade": "^1.11.0",
